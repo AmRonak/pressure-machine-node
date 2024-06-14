@@ -7,11 +7,11 @@ const { Op } = require('sequelize');
 exports.registerUser = async (req, res, next) => {
   try {
     const { username, password, userLevel, attempts, autoLogoutTime, passwordExpiry, expiryDaysNotification, autoUnblockTime, comment, pin, active } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await User.create({
       username,
-      password: hashedPassword,
+      password: password,
       userLevel,
       attempts,
       autoLogoutTime,
@@ -29,7 +29,7 @@ exports.registerUser = async (req, res, next) => {
 };
 
 exports.loginUser = async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, pin } = req.body;
 
   const user = await User.findOne({ where: { username } });
 
@@ -51,7 +51,12 @@ exports.loginUser = async (req, res) => {
     }
   }
 
-  const validPassword = await bcrypt.compare(password, user.password);
+  let validPassword = false;
+  if (password) {
+    validPassword = password === user.password;
+  } else if (pin) {
+    validPassword = pin === user.pin;
+  }
 
   if (!validPassword) {
     user.failedAttempts += 1;
@@ -81,54 +86,7 @@ exports.currentProfile = (req, res) => {
       message: 'This is a secured profile route',
       user: req.user
   });
-} 
-
-exports.forgetPassword = async (req, res, next) => {
-  try {
-    const { username, newPassword, pin } = req.body;
-    const user = await User.findOne({ where: { username } });
-
-    if (!user) return next(new AppError('User not found', 400));
-    if (user.pin !== parseInt(pin)) return next(new AppError('Invalid PIN', 400));
-
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-    user.password = hashedPassword;
-    await user.save();
-
-    res.status(200).send('Password updated successfully');
-  } catch (err) {
-    next(new AppError(err.message, 500));
-  }
-};
-
-exports.updateUser = async (req, res, next) => {
-  try {
-    const { username, password, userLevel, attempts, autoLogoutTime, passwordExpiry, expiryDaysNotification, autoUnblockTime, comment, pin, active } = req.body;
-    const user = await User.findByPk(req.params.id);
-
-    if (!user) return next(new AppError('User not found', 400));
-
-    user.username = username || user.username;
-    if (password) {
-      user.password = await bcrypt.hash(password, 10);
-    }
-    user.userLevel = userLevel || user.userLevel;
-    user.attempts = attempts || user.attempts;
-    user.autoLogoutTime = autoLogoutTime || user.autoLogoutTime;
-    user.passwordExpiry = passwordExpiry || user.passwordExpiry;
-    user.expiryDaysNotification = expiryDaysNotification || user.expiryDaysNotification;
-    user.autoUnblockTime = autoUnblockTime || user.autoUnblockTime;
-    user.comment = comment || user.comment;
-    user.pin = pin || user.pin;
-    user.active = active !== undefined ? active : user.active;
-
-    await user.save();
-
-    res.status(200).json(user);
-  } catch (err) {
-    next(new AppError(err.message, 500));
-  }
-};
+}
 
 exports.listUsers = async (req, res, next) => {
   try {
@@ -182,3 +140,52 @@ exports.blockUser = async (req, res, next) => {
     next(new AppError(err.message, 500));
   }
 };
+
+exports.forgetPassword = async (req, res, next) => {
+  try {
+    const { username, newPassword, pin } = req.body;
+    const user = await User.findOne({ where: { username } });
+
+    if (!user) return next(new AppError('User not found', 400));
+    if (user.pin !== parseInt(pin)) return next(new AppError('Invalid PIN', 400));
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    res.status(200).send('Password updated successfully');
+  } catch (err) {
+    next(new AppError(err.message, 500));
+  }
+};
+
+exports.updateUser = async (req, res, next) => {
+  try {
+    const { username, password, userLevel, attempts, autoLogoutTime, passwordExpiry, expiryDaysNotification, autoUnblockTime, comment, pin, active } = req.body;
+    const user = await User.findByPk(req.params.id);
+
+    if (!user) return next(new AppError('User not found', 400));
+
+    user.username = username || user.username;
+    if (password) {
+      user.password = password
+    }
+    user.userLevel = userLevel || user.userLevel;
+    user.attempts = attempts || user.attempts;
+    user.autoLogoutTime = autoLogoutTime || user.autoLogoutTime;
+    user.passwordExpiry = passwordExpiry || user.passwordExpiry;
+    user.expiryDaysNotification = expiryDaysNotification || user.expiryDaysNotification;
+    user.autoUnblockTime = autoUnblockTime || user.autoUnblockTime;
+    user.comment = comment || user.comment;
+    user.pin = pin || user.pin;
+    user.active = active !== undefined ? active : user.active;
+
+    await user.save();
+
+    res.status(200).json(user);
+  } catch (err) {
+    next(new AppError(err.message, 500));
+  }
+};
+
+

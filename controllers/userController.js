@@ -40,7 +40,7 @@ exports.loginUser = async (req, res) => {
   if (!user.active) {
     const blockTime = new Date(user.blockTime);
     const unblockTime = new Date(blockTime.getTime() + user.autoUnblockTime * 60000);
-    console.log("unblockTime ", unblockTime);
+
     if (now < unblockTime) {
       return res.status(403).json({ message: `Account is blocked. Try again after ${unblockTime}` });
     } else {

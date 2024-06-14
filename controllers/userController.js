@@ -142,24 +142,6 @@ exports.blockUser = async (req, res, next) => {
   }
 };
 
-exports.forgetPassword = async (req, res, next) => {
-  try {
-    const { username, newPassword, pin } = req.body;
-    const user = await User.findOne({ where: { username } });
-
-    if (!user) return next(new AppError('User not found', 400));
-    if (user.pin !== parseInt(pin)) return next(new AppError('Invalid PIN', 400));
-
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-    user.password = hashedPassword;
-    await user.save();
-
-    res.status(200).send('Password updated successfully');
-  } catch (err) {
-    next(new AppError(err.message, 500));
-  }
-};
-
 exports.updateUser = async (req, res, next) => {
   try {
     const { username, password, userLevel, attempts, autoLogoutTime, passwordExpiry, expiryDaysNotification, autoUnblockTime, comment, pin } = req.body;
@@ -185,6 +167,30 @@ exports.updateUser = async (req, res, next) => {
     res.status(200).json(user);
   } catch (err) {
     next(new AppError(err.message, 500));
+  }
+};
+
+exports.changePassword = async (req, res, next) => {
+  const { currentPassword, newPassword } = req.body;
+
+  try {
+    const user = await User.findByPk(req.user.id);
+
+    if (!user) {
+      return next(new AppError('User not found', 404));
+    }
+
+    const isMatch = currentPassword === user.password;
+    if (!isMatch) {
+      return next(new AppError('Current password is incorrect', 401));
+    }
+
+    user.password = newPassword;
+    await user.save();
+
+    res.status(200).json({ message: 'Password changed successfully' });
+  } catch (error) {
+    next(new AppError(error.message, 500));
   }
 };
 

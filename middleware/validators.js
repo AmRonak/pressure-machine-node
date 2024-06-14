@@ -26,7 +26,6 @@ const userValidationRules = () => {
       }
       return true;
     }),
-    // body('active').isBoolean().withMessage('Active must be a boolean')
   ];
 };
 
@@ -36,19 +35,21 @@ const loginValidationRules = () => {
   ];
 };
 
-const passwordResetValidationRules = () => {
+const changePasswordValidationRules = () => {
   return [
-    body('username').isAlphanumeric().isLength({ min: 3, max: 30 }).withMessage('Username must be alphanumeric and 3-30 characters long'),
+    body('currentPassword')
+      .exists()
+      .withMessage('Current password is required'),
     body('newPassword')
-      .isLength({ min: 8 })
+      .isLength({ min: 5 })
       .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/)
-      .withMessage('New password must be at least 8 characters long and contain one uppercase letter, one lowercase letter, one number, and one special character'),
+      .withMessage('Password must be at least 8 characters long and contain one uppercase letter, one lowercase letter, one number, and one special character'),
     body('confirmPassword').custom((value, { req }) => {
       if (value !== req.body.newPassword) {
         throw new Error('Password confirmation does not match new password');
       }
       return true;
-    })
+    }),
   ];
 };
 
@@ -75,6 +76,6 @@ const validate = (req, res, next) => {
 module.exports = {
   userValidationRules,
   loginValidationRules,
-  passwordResetValidationRules,
+  changePasswordValidationRules,
   validate,
 };

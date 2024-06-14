@@ -1,6 +1,6 @@
 const express = require('express');
 const { authenticateJWT, authorizeRole } = require('../middleware/auth');
-const { userValidationRules, loginValidationRules, passwordResetValidationRules, validate } = require('../middleware/validators');
+const { userValidationRules, loginValidationRules, validate, changePasswordValidationRules } = require('../middleware/validators');
 const userController = require('../controllers/userController');
 
 const router = express.Router();
@@ -23,15 +23,13 @@ router.get('/profile', authenticateJWT, userController.currentProfile);
 // Block/Unblock user (Admin only)
 router.patch('/block/:id', authenticateJWT, authorizeRole(['Administrator']), userController.blockUser);
 
-// Forget password endpoint
-router.post('/forgetpassword', passwordResetValidationRules(), validate, userController.forgetPassword);
-
 // List users (Admin only)
 router.get('/', authenticateJWT, authorizeRole(['Administrator']), userController.listUsers);
 
 // Update user details (Admin only)
 router.put('/:id', authenticateJWT, authorizeRole(['Administrator']), userValidationRules(), validate, userController.updateUser);
 
+router.patch('/changePassword', authenticateJWT, changePasswordValidationRules(), validate, userController.changePassword);
 
 
 module.exports = router;

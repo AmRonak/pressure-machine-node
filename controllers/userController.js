@@ -153,10 +153,31 @@ exports.blockUser = async (req, res, next) => {
 
     if (!user) return next(new AppError('User not found', 400));
 
-    user.active = !user.active;
+    const { block } = req.query;
+    if (block !== 'true' && block !== 'false') {
+      return next(new AppError('Invalid block parameter', 400));
+    }
+
+    const isBlocked = user.blockTime !== null;
+
+    if (block === 'true' && isBlocked) {
+      return next(new AppError('User is already blocked', 400));
+    }
+
+    if (block === 'false' && !isBlocked) {
+      return next(new AppError('User is not blocked', 400));
+    }
+
+    user.active = block === 'false';
+    user.blockTime = block === 'true' ? new Date() : null;
     await user.save();
 
-    res.status(200).json(user);
+    res.status(200).json({
+      status: 'success',
+      data: {
+        user
+      }
+    });
   } catch (err) {
     next(new AppError(err.message, 500));
   }

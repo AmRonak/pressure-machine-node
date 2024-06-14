@@ -20,17 +20,17 @@ router.post('/login', loginValidationRules(), validate, userController.loginUser
 
 router.get('/profile', authenticateJWT, userController.currentProfile);
 
-// List users (Admin only)
-router.get('/', authenticateJWT, authorizeRole(['Administrator']), userController.listUsers);
-
 // Block/Unblock user (Admin only)
 router.patch('/block/:id', authenticateJWT, authorizeRole(['Administrator']), userController.blockUser);
 
 // Forget password endpoint
 router.post('/forgetpassword', passwordResetValidationRules(), validate, userController.forgetPassword);
 
+// List users (Admin only)
+router.get('/', authenticateJWT, authorizeRole(['Administrator']), userController.listUsers);
+
 // Update user details (Admin only)
-router.put('/update/:id', authenticateJWT, authorizeRole(['Administrator']), userValidationRules(), validate, userController.updateUser);
+router.put('/:id', authenticateJWT, authorizeRole(['Administrator']), userValidationRules(), validate, userController.updateUser);
 
 
 

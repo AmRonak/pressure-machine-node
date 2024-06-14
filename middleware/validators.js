@@ -33,7 +33,6 @@ const userValidationRules = () => {
 const loginValidationRules = () => {
   return [
     body('username').isLength({ min: 3, max: 30 }).withMessage('Username must be 3-30 characters long'),
-    // body('password').exists().withMessage('Password is required')
   ];
 };
 

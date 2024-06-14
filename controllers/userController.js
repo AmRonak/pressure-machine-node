@@ -46,6 +46,7 @@ exports.loginUser = async (req, res) => {
     } else {
       // Unblock user
       user.active = true;
+      user.blockTime = null;
       user.failedAttempts = 0;
       await user.save();
     }
@@ -76,7 +77,7 @@ exports.loginUser = async (req, res) => {
   user.failedAttempts = 0;
   await user.save();
 
-  const token = jwt.sign({ id: user.id, userLevel: user.userLevel }, process.env.JWT_SECRET, { expiresIn: '1h' });
+  const token = jwt.sign({ id: user.id, userLevel: user.userLevel }, process.env.JWT_SECRET, { expiresIn: `${user.passwordExpiry}d` });
 
   res.json({ token });
 };
@@ -161,7 +162,7 @@ exports.forgetPassword = async (req, res, next) => {
 
 exports.updateUser = async (req, res, next) => {
   try {
-    const { username, password, userLevel, attempts, autoLogoutTime, passwordExpiry, expiryDaysNotification, autoUnblockTime, comment, pin, active } = req.body;
+    const { username, password, userLevel, attempts, autoLogoutTime, passwordExpiry, expiryDaysNotification, autoUnblockTime, comment, pin } = req.body;
     const user = await User.findByPk(req.params.id);
 
     if (!user) return next(new AppError('User not found', 400));
@@ -178,7 +179,6 @@ exports.updateUser = async (req, res, next) => {
     user.autoUnblockTime = autoUnblockTime || user.autoUnblockTime;
     user.comment = comment || user.comment;
     user.pin = pin || user.pin;
-    user.active = active !== undefined ? active : user.active;
 
     await user.save();
 

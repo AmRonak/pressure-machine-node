@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const AppError = require('../utils/AppError');
 const { Op } = require('sequelize');
+const recipeSetting = require('../models/recipeSetting');
 
 exports.registerUser = async (req, res, next) => {
   try {
@@ -22,6 +23,12 @@ exports.registerUser = async (req, res, next) => {
       pin,
       active
     });
+
+    // Create new record with default Recipe Settings
+    await recipeSetting.create({
+      userId: newUser.id
+    });
+
     res.status(201).json(newUser);
   } catch (err) {
     next(new AppError(err.message, 500));

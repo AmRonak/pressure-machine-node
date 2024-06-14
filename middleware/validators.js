@@ -53,6 +53,18 @@ const changePasswordValidationRules = () => {
   ];
 };
 
+const recipeSettingValidationRules = () => {
+  return [
+    body('initialPressure').optional().isInt({ min: 0, max: 1500 }).withMessage('Initial Pressure must be between 0 and 1500 Pa'),
+    body('setPressure').optional().isInt({ min: 0, max: 1500 }).withMessage('Set Pressure must be between 0 and 1500 Pa'),
+    body('leakTestPressure').optional().isInt({ min: 0, max: 1000 }).withMessage('Leak Test Pressure must be between 0 and 1000 Pa'),
+    body('lowerTestPressure').optional().isInt({ min: 0, max: 1000 }).withMessage('Lower Test Pressure must be between 0 and 1000 Pa'),
+    body('stabilizationTime').optional().isInt().isIn([30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 360, 390, 420, 450, 480, 510, 540, 570, 600, 630, 660, 690, 720, 750, 780, 810, 840, 870, 900]).withMessage('Stabilization Time must be between 30 to 900'),
+    body('testTime').optional().isInt().isIn([30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 360, 390, 420, 450, 480, 510, 540, 570, 600, 630, 660, 690, 720, 750, 780, 810, 840, 870, 900]).withMessage('Test Time must be between 30 to 900'),
+    body('comment').optional().isString().withMessage('Comment must be a string')
+  ];
+};
+
 const validate = (req, res, next) => {
   const errors = validationResult(req);
   console.log("errors ", errors);
@@ -70,12 +82,13 @@ const validate = (req, res, next) => {
       "isOperational": false
     },
     message: extractedErrors,
-});
+  });
 };
 
 module.exports = {
   userValidationRules,
   loginValidationRules,
   changePasswordValidationRules,
+  recipeSettingValidationRules,
   validate,
 };

@@ -6,6 +6,8 @@ const dotenv = require('dotenv');
 const routes = require('./routes');
 const globalErrorHandler = require('./middleware/errorHandler');
 const AppError = require('./utils/AppError');
+const User = require('./models/user');
+const RecipeSetting = require('./models/recipeSetting');
 
 dotenv.config();
 
@@ -28,8 +30,11 @@ app.all('*', (req, res, next) => {
 // Global error handling middleware
 app.use(globalErrorHandler);
 
+User.hasOne(RecipeSetting, { foreignKey: 'userId', onDelete: 'CASCADE' });
+RecipeSetting.belongsTo(User, { foreignKey: 'userId' });
+
 sequelize.sync({
-    // alter: true
+    alter: true
 }).then(() => {
     app.listen(PORT, () => {
         console.log(`Server is running on port ${PORT}`);

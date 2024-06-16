@@ -1,5 +1,6 @@
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
+const getmac = require('getmac')
 
 const authenticateJWT = (req, res, next) => {
     const token = req.header('Authorization');
@@ -9,7 +10,10 @@ const authenticateJWT = (req, res, next) => {
 
     try {
         const verified = jwt.verify(jwtToken, process.env.JWT_SECRET);
+        const macAddress = getmac.default();
+        console.log("macAddress ", macAddress);
         req.user = verified;
+        req.macAddress = macAddress
         next();
     } catch (err) {
         res.status(400).send('Invalid Token');

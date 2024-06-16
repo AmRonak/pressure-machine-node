@@ -19,7 +19,7 @@ const userValidationRules = () => {
     body('passwordExpiry').isInt({ min: 0 }).withMessage('Password expiry must be a positive integer'),
     body('expiryDaysNotification').isInt({ min: 0 }).withMessage('Expiry days notification must be a positive integer'),
     body('autoUnblockTime').isInt({ min: 0 }).withMessage('Auto unblock time must be a positive integer'),
-    body('pin').isInt({ min: 1000, max: 9999 }).withMessage('PIN must be a number between 1000 and 9999'),
+    body('pin').isNumeric().withMessage('PIN must be a number').isLength({ min: 4, max: 4 }).withMessage('PIN must be exactly 4 characters long'),
     body('confirmPin').custom((value, { req }) => {
       if (value !== req.body.pin) {
         throw new Error('Confirm Pin does not match pin');

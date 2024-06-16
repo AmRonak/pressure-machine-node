@@ -2,13 +2,13 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../sequelize');
 
 const RecipeSetting = sequelize.define('RecipeSetting', {
-  userId: {
-    type: DataTypes.INTEGER,
+  macId: {
+    type: DataTypes.STRING,
     allowNull: false,
-    references: {
-      model: 'Users',
-      key: 'id'
-    }
+    unique: {
+      args: true,
+      msg: 'Setting already available, You can only update it!'
+  }
   },
   initialPressure: {
     type: DataTypes.INTEGER,

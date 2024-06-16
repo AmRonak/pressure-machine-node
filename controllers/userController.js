@@ -24,11 +24,6 @@ exports.registerUser = async (req, res, next) => {
       active
     });
 
-    // Create new record with default Recipe Settings
-    await recipeSetting.create({
-      userId: newUser.id
-    });
-
     res.status(201).json(newUser);
   } catch (err) {
     next(new AppError(err.message, 500));

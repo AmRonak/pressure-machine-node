@@ -2,11 +2,14 @@ const RecipeSetting = require('../models/recipeSetting');
 const AppError = require('../utils/AppError');
 
 exports.updateRecipeSetting = async (req, res, next) => {
-  const userId = req.user.id;
+  const macId = req.macAddress;
+
+  if (!macId) return next(new AppError('Can not identify mac id!', 404));
+
   const { initialPressure, setPressure, leakTestPressure, lowerTestPressure, stabilizationTime, testTime, comment } = req.body;
 
   try {
-    const recipeSetting = await RecipeSetting.findOne({ where: { userId } });
+    let recipeSetting = await RecipeSetting.findOne({ where: { macId } });
 
     if (!recipeSetting) return next(new AppError('Recipe setting not found', 404));
 
@@ -27,12 +30,19 @@ exports.updateRecipeSetting = async (req, res, next) => {
 };
 
 exports.getRecipeSetting = async (req, res, next) => {
-  const userId = req.user.id;
+  const macId = req.macAddress;
+
+  if (!macId) return next(new AppError('Can not identify mac id!', 404));
 
   try {
-    const recipeSetting = await RecipeSetting.findOne({ where: { userId } });
+    let recipeSetting = await RecipeSetting.findOne({ where: { macId } });
 
-    if (!recipeSetting) return next(new AppError('Recipe setting not found', 404));
+    if (!recipeSetting) {
+      // Create new record with default Recipe Settings
+      recipeSetting = await RecipeSetting.create({
+        macId
+      });
+    }
 
     res.status(200).json(recipeSetting);
   } catch (error) {

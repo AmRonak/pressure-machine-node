@@ -86,8 +86,8 @@ exports.loginUser = async (req, res) => {
 
 exports.currentProfile = (req, res) => {
   res.json({
-      message: 'This is a secured profile route',
-      user: req.user
+    message: 'This is a secured profile route',
+    user: req.user
   });
 }
 
@@ -95,14 +95,14 @@ exports.listUsers = async (req, res, next) => {
   try {
     const users = await User.findAll({
       where: {
-          id: {
-              [Op.ne]: req.user.id // Exclude current user
-          }
+        id: {
+          [Op.ne]: req.user.id // Exclude current user
+        }
       },
       attributes: { exclude: ['password'] } // Exclude password from results
-  });
+    });
 
-  res.json(users);
+    res.json(users);
   } catch (err) {
     next(new AppError(err.message, 500));
   }
@@ -196,4 +196,24 @@ exports.changePassword = async (req, res, next) => {
   }
 };
 
+exports.getUserById = async (req, res, next) => {
+  if (!req.params.id) {
+    return next(new AppError('User ID missing', 400));
+  }
+
+  try {
+    const user = await User.findByPk(req.params.id);
+
+    if (!user) return next(new AppError('User not found', 400));
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        user
+      }
+    });
+  } catch (error) {
+    next(new AppError(error.message, 500));
+  }
+};
 

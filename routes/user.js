@@ -26,6 +26,9 @@ router.patch('/block/:id', authenticateJWT, authorizeRole(['Administrator']), us
 // List users (Admin only)
 router.get('/', authenticateJWT, authorizeRole(['Administrator']), userController.listUsers);
 
+// List users (Admin only)
+router.get('/:id', authenticateJWT, userController.getUserById);
+
 // Update user details (Admin only)
 router.put('/:id', authenticateJWT, authorizeRole(['Administrator']), userValidationRules(), validate, userController.updateUser);
 

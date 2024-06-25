@@ -4,6 +4,6 @@ const { authenticateJWT, authorizeRole } = require('../middleware/auth');
 const parameterSettingController = require('../controllers/parameterSettingController');
 
 router.get('/', authenticateJWT, parameterSettingController.getParameterSettings);
-router.put('/', authenticateJWT, authorizeRole(['Administrator', 'Manager']), parameterSettingController.updateParameterSettings);
+router.put('/', authenticateJWT, parameterSettingController.updateParameterSettings);
 
 module.exports = router;

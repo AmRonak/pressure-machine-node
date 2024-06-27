@@ -70,6 +70,26 @@ const MasterParameter = sequelize.define('MasterParameter', {
       min: 0,
       max: 10000
     }
+  },
+  motor1: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
+  motor2: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
+  motor3: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
+  valve1: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
+  valve2: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
   }
 });
 

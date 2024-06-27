@@ -19,7 +19,9 @@ exports.getMasterParameter = async (req, res, next) => {
 
 exports.updateMasterParameter = async (req, res, next) => {
   const macId = req.macAddress;
-  const { gasketPressure, gasketPressureAlarmTime, glovePressureAlarmTime, pressurePursuingPressure, pressurePursuingTime, glovePressure, valveOnTime, valveOffTime } = req.body;
+  const { gasketPressure, gasketPressureAlarmTime, glovePressureAlarmTime, pressurePursuingPressure, pressurePursuingTime, glovePressure, valveOnTime, valveOffTime,
+    motor1, motor2, motor3, valve1, valve2
+   } = req.body;
 
   try {
     const masterParameter = await MasterParameter.findOne({ where: { macId } });
@@ -35,6 +37,11 @@ exports.updateMasterParameter = async (req, res, next) => {
     if (glovePressure !== undefined) masterParameter.glovePressure = glovePressure;
     if (valveOnTime !== undefined) masterParameter.valveOnTime = valveOnTime;
     if (valveOffTime !== undefined) masterParameter.valveOffTime = valveOffTime;
+    if (motor1 !== undefined) masterParameter.motor1 = motor1;
+    if (motor2 !== undefined) masterParameter.motor2 = motor2;
+    if (motor3 !== undefined) masterParameter.motor3 = motor3;
+    if (valve1 !== undefined) masterParameter.valve1 = valve1;
+    if (valve2 !== undefined) masterParameter.valve2 = valve2;
 
     await masterParameter.save();
 

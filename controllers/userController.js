@@ -1,9 +1,11 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const AuditLog = require('../models/auditLog');
 const AppError = require('../utils/AppError');
 const { Op } = require('sequelize');
 const recipeSetting = require('../models/recipeSetting');
+const getmac = require('getmac')
 
 exports.registerUser = async (req, res, next) => {
   try {
@@ -32,6 +34,7 @@ exports.registerUser = async (req, res, next) => {
 
 exports.loginUser = async (req, res) => {
   const { username, password, pin } = req.body;
+  const macAddress = getmac.default();
 
   const user = await User.findOne({ where: { username } });
 
@@ -68,17 +71,40 @@ exports.loginUser = async (req, res) => {
       user.active = false;
       user.blockTime = now;
       await user.save();
-      return res.status(403).json({ error: 'Account Blocked. Too many failed login attempts' });
+      await AuditLog.create({
+        userId: user.id,
+        macId: macAddress,
+        log: `User is blocked due to max login attempts`,
+        oldValue: null,
+        newValue: null,
+        category: 'general'
+      });
+      return res.status(403).json({ error: 'User is blocked due to max login attempts' });
     }
 
     await user.save();
-    return res.status(400).json({ message: 'Invalid credentials' });
+    await AuditLog.create({
+      userId: user.id,
+      macId: macAddress,
+      log: `Incorrect password. Login attempts left: ${user.attempts - user.failedAttempts}`,
+      oldValue: null,
+      newValue: null,
+      category: 'general'
+    });
+    return res.status(400).json({ message: `Incorrect password. Login attempts left: ${user.attempts - user.failedAttempts}` });
   }
 
   // Reset failed attempts on successful login
   user.failedAttempts = 0;
   await user.save();
-
+  await AuditLog.create({
+    userId: user.id,
+    macId: macAddress,
+    log: `User Logged In`,
+    oldValue: null,
+    newValue: null,
+    category: 'general'
+  });
   const token = jwt.sign({ id: user.id, userLevel: user.userLevel }, process.env.JWT_SECRET, { expiresIn: `${user.passwordExpiry}d` });
 
   res.json({ token });

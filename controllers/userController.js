@@ -26,6 +26,16 @@ exports.registerUser = async (req, res, next) => {
       active
     });
 
+    await AuditLog.create({
+      userId: req.user.id,
+      macId: req.macAddress,
+      log: `User Created `,
+      oldValue: null,
+      newValue: null,
+      category: 'general',
+      updatedUserId: newUser.id
+    });
+
     res.status(201).json(newUser);
   } catch (err) {
     next(new AppError(err.message, 500));
@@ -158,7 +168,15 @@ exports.blockUser = async (req, res, next) => {
     user.active = block === 'false';
     user.blockTime = block === 'true' ? new Date() : null;
     await user.save();
-
+    await AuditLog.create({
+      userId: req.user.id,
+      macId: req.macAddress,
+      log: `User ${block === "true" ? "Blocked" : "Unblocked"}`,
+      oldValue: null,
+      newValue: null,
+      category: 'general',
+      updatedUserId: user.id
+    });
     res.status(200).json({
       status: 'success',
       data: {
@@ -177,18 +195,124 @@ exports.updateUser = async (req, res, next) => {
 
     if (!user) return next(new AppError('User not found', 400));
 
-    user.username = username || user.username;
-    if (password) {
-      user.password = password
+    if (username !== undefined && username !== user.username) {
+      await AuditLog.create({
+        userId: req.user.id,
+        macId: req.macAddress,
+        log: `Username Changed`,
+        oldValue: user.username,
+        newValue: username,
+        category: 'general',
+        updatedUserId: user.id
+      });
+      user.username = username;
     }
-    user.userLevel = userLevel || user.userLevel;
-    user.attempts = attempts || user.attempts;
-    user.autoLogoutTime = autoLogoutTime || user.autoLogoutTime;
-    user.passwordExpiry = passwordExpiry || user.passwordExpiry;
-    user.expiryDaysNotification = expiryDaysNotification || user.expiryDaysNotification;
-    user.autoUnblockTime = autoUnblockTime || user.autoUnblockTime;
+    
+    if (password !== undefined && password !== user.password) {
+      await AuditLog.create({
+        userId: req.user.id,
+        macId: req.macAddress,
+        log: `Password Changed`,
+        oldValue: null,
+        newValue: null,
+        category: 'general',
+        updatedUserId: user.id
+      });
+      user.password = password;
+    }
+
+    if (userLevel !== undefined && userLevel !== user.userLevel) {
+      await AuditLog.create({
+        userId: req.user.id,
+        macId: req.macAddress,
+        log: `User Level Changed`,
+        oldValue: user.userLevel,
+        newValue: userLevel,
+        category: 'general',
+        updatedUserId: user.id
+      });
+      user.userLevel = userLevel;
+    }
+
+    if (attempts !== undefined && attempts !== user.attempts) {
+      await AuditLog.create({
+        userId: req.user.id,
+        macId: req.macAddress,
+        log: `Attempts Changed`,
+        oldValue: user.attempts,
+        newValue: attempts,
+        category: 'general',
+        updatedUserId: user.id
+      });
+      user.attempts = attempts;
+    }
+
+    if (autoLogoutTime !== undefined && autoLogoutTime !== user.autoLogoutTime) {
+      await AuditLog.create({
+        userId: req.user.id,
+        macId: req.macAddress,
+        log: `Auto Logout Time Changed`,
+        oldValue: user.autoLogoutTime,
+        newValue: autoLogoutTime,
+        category: 'general',
+        updatedUserId: user.id
+      });
+      user.autoLogoutTime = autoLogoutTime;
+    }
+
+    if (passwordExpiry !== undefined && passwordExpiry !== user.passwordExpiry) {
+      await AuditLog.create({
+        userId: req.user.id,
+        macId: req.macAddress,
+        log: `Password Expiry Changed`,
+        oldValue: user.passwordExpiry,
+        newValue: passwordExpiry,
+        category: 'general',
+        updatedUserId: user.id
+      });
+      user.passwordExpiry = passwordExpiry;
+    }
+
+    if (expiryDaysNotification !== undefined && expiryDaysNotification !== user.expiryDaysNotification) {
+      await AuditLog.create({
+        userId: req.user.id,
+        macId: req.macAddress,
+        log: `Expiry Days Notification Changed`,
+        oldValue: user.expiryDaysNotification,
+        newValue: expiryDaysNotification,
+        category: 'general',
+        updatedUserId: user.id
+      });
+      user.expiryDaysNotification = expiryDaysNotification;
+    }
+
+    if (autoUnblockTime !== undefined && autoUnblockTime !== user.autoUnblockTime) {
+      await AuditLog.create({
+        userId: req.user.id,
+        macId: req.macAddress,
+        log: `Auto Unblock Time Changed`,
+        oldValue: user.autoUnblockTime,
+        newValue: autoUnblockTime,
+        category: 'general',
+        updatedUserId: user.id
+      });
+      user.autoUnblockTime = autoUnblockTime;
+    }
+
+    if (pin !== undefined && parseInt(pin) !== user.pin) {
+      await AuditLog.create({
+        userId: req.user.id,
+        macId: req.macAddress,
+        log: `Pin Changed`,
+        oldValue: user.pin,
+        newValue: pin,
+        category: 'general',
+        updatedUserId: user.id
+      });
+      user.pin = pin;
+    }
+    
     user.comment = comment || user.comment;
-    user.pin = pin || user.pin;
 
     await user.save();
 
@@ -215,6 +339,15 @@ exports.changePassword = async (req, res, next) => {
 
     user.password = newPassword;
     await user.save();
+    await AuditLog.create({
+      userId: req.user.id,
+      macId: req.macAddress,
+      log: `Password Changed`,
+      oldValue: null,
+      newValue: null,
+      category: 'general',
+      updatedUserId: user.id
+    });
 
     res.status(200).json({ message: 'Password changed successfully' });
   } catch (error) {

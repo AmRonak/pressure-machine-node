@@ -15,6 +15,14 @@ const AuditLog = sequelize.define('AuditLog', {
     type: DataTypes.STRING,
     allowNull: false
   },
+  updatedUserId: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    references: {
+      model: 'Users',
+      key: 'id'
+    }
+  },
   log: {
     type: DataTypes.STRING,
     allowNull: false
@@ -37,5 +45,8 @@ const AuditLog = sequelize.define('AuditLog', {
 // Establish the relationship with the User model
 User.hasMany(AuditLog, { foreignKey: 'userId' });
 AuditLog.belongsTo(User, { foreignKey: 'userId' });
+
+User.hasMany(AuditLog, { foreignKey: 'updatedUserId' });
+AuditLog.belongsTo(User, { foreignKey: 'updatedUserId' });
 
 module.exports = AuditLog;

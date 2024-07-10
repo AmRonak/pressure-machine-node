@@ -145,43 +145,61 @@ exports.listUsers = async (req, res, next) => {
 };
 
 exports.blockUser = async (req, res, next) => {
+  const { ids, action } = req.body;
+
   try {
-    const user = await User.findByPk(req.params.id);
-
-    if (!user) return next(new AppError('User not found', 400));
-
-    const { block } = req.query;
-    if (block !== 'true' && block !== 'false') {
-      return next(new AppError('Invalid block parameter', 400));
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return next(new AppError('Invalid or missing user IDs', 400));
     }
 
-    const isBlocked = user.blockTime !== null;
-
-    if (block === 'true' && isBlocked) {
-      return next(new AppError('User is already blocked', 400));
+    if (!['block', 'unblock'].includes(action)) {
+      return next(new AppError('Invalid action. Must be "block" or "unblock"', 400));
     }
 
-    if (block === 'false' && !isBlocked) {
-      return next(new AppError('User is not blocked', 400));
-    }
-
-    user.active = block === 'false';
-    user.blockTime = block === 'true' ? new Date() : null;
-    await user.save();
-    await AuditLog.create({
-      userId: req.user.id,
-      macId: req.macAddress,
-      log: `User ${block === "true" ? "Blocked" : "Unblocked"}`,
-      oldValue: null,
-      newValue: null,
-      category: 'general',
-      updatedUserId: user.id
-    });
-    res.status(200).json({
-      status: 'success',
-      data: {
-        user
+    const users = await User.findAll({
+      where: {
+        id: {
+          [Op.in]: ids
+        }
       }
+    });
+
+    if (users.length === 0) {
+      return next(new AppError('No users found with the provided IDs', 404));
+    }
+
+    const updates = users.map(async user => {
+      if (action === 'block') {
+        if (!user.active) {
+          throw new AppError(`User ${user.username} is already blocked`, 400);
+        }
+        user.active = false;
+        user.blockTime = new Date();
+      } else if (action === 'unblock') {
+        if (user.active) {
+          throw new AppError(`User ${user.username} is not blocked`, 400);
+        }
+        user.active = true;
+        user.blockTime = null;
+      }
+
+      await AuditLog.create({
+        userId: req.user.id,
+        macId: req.macAddress,
+        log: `User ${action === 'block' ? "Blocked" : "Unblocked"}`,
+        oldValue: null,
+        newValue: null,
+        category: 'general',
+        updatedUserId: user.id
+      });
+      return user.save();
+    });
+
+    await Promise.all(updates);
+
+    res.status(200).json({
+      message: `Users have been ${action}ed successfully`,
+      ids: ids
     });
   } catch (err) {
     next(new AppError(err.message, 500));

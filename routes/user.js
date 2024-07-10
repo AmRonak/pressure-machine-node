@@ -20,8 +20,8 @@ router.post('/login', loginValidationRules(), validate, userController.loginUser
 
 router.get('/profile', authenticateJWT, userController.currentProfile);
 
-// Block/Unblock user (Admin only)
-router.patch('/block/:id', authenticateJWT, authorizeRole(['Administrator']), userController.blockUser);
+// Block/Unblock users (Admin only)
+router.post('/block', authenticateJWT, authorizeRole(['Administrator']), userController.blockUser);
 
 // List users (Admin only)
 router.get('/', authenticateJWT, authorizeRole(['Administrator']), userController.listUsers);

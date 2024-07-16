@@ -7,6 +7,26 @@ const { Op } = require('sequelize');
 const recipeSetting = require('../models/recipeSetting');
 const getmac = require('getmac')
 
+exports.createAdmin = async () => {
+  try {
+    const newUser = await User.create({
+      username: "admin",
+      password: "Admin@123",
+      userLevel: "Administrator",
+      "pin": 1234,
+      "attempts": 5,
+      "autoLogoutTime": 20,
+      "passwordExpiry": 1,
+      "expiryDaysNotification": 10,
+      "autoUnblockTime": 15
+    });
+
+    // res.status(201).json(newUser);
+  } catch (err) {
+    console.log("err", err);
+  }
+};
+
 exports.registerUser = async (req, res, next) => {
   try {
     const { username, password, userLevel, attempts, autoLogoutTime, passwordExpiry, expiryDaysNotification, autoUnblockTime, comment, pin, active } = req.body;

@@ -2,6 +2,7 @@ const ParameterSetting = require('../models/parameterSetting');
 const TestResult = require('../models/testResult');
 const User = require('../models/user');
 const AppError = require('../utils/AppError');
+const { Sequelize } = require('sequelize');
 
 exports.createTestResult = async (req, res, next) => {
   try {
@@ -43,9 +44,31 @@ exports.createTestResult = async (req, res, next) => {
       batchNumber: parameterSetting.batchNo,
       userName: user.username,
       testStatus,
+      macId: macId
     });
 
     res.status(201).json(newTestResult);
+  } catch (error) {
+    next(new AppError(error.message, 500));
+  }
+};
+
+exports.getUniqueBatchNumbers = async (req, res, next) => {
+  try {
+    const macId = req.macAddress;
+    
+    if (!macId) {
+      return res.status(400).json({ message: 'macId is required' });
+    }
+
+    const uniqueBatchNumbers = await TestResult.findAll({
+      attributes: [[Sequelize.fn('DISTINCT', Sequelize.col('batchNumber')), 'batchNumber']],
+      where: { macId },
+    });
+
+    const batchNumbers = uniqueBatchNumbers.map(result => result.batchNumber);
+
+    res.status(200).json({ batchNumbers });
   } catch (error) {
     next(new AppError(error.message, 500));
   }

@@ -9,6 +9,10 @@ const TestResult = sequelize.define('TestResult', {
     autoIncrement: true,
     primaryKey: true,
   },
+  macId: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   userId: {
     type: DataTypes.INTEGER,
     references: {

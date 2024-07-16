@@ -16,7 +16,7 @@ const authenticateJWT = (req, res, next) => {
         req.macAddress = macAddress
         next();
     } catch (err) {
-        res.status(400).send('Invalid Token');
+        res.status(400).send(err ? err : 'Invalid Token');
     }
 };
 

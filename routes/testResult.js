@@ -28,4 +28,6 @@ router.post(
   testResultController.createTestResult
 );
 
+router.get('/batchNumbers', authenticateJWT, testResultController.getUniqueBatchNumbers);
+
 module.exports = router;

@@ -30,4 +30,6 @@ router.post(
 
 router.get('/batchNumbers', authenticateJWT, testResultController.getUniqueBatchNumbers);
 
+router.get('/filter', authenticateJWT, testResultController.filterTestResults);
+
 module.exports = router;

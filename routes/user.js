@@ -26,6 +26,9 @@ router.post('/block', authenticateJWT, authorizeRole(['Administrator']), userCon
 // List users (Admin only)
 router.get('/', authenticateJWT, authorizeRole(['Administrator']), userController.listUsers);
 
+// List of usernames
+router.get('/usernames', authenticateJWT, userController.getAllUsernames);
+
 // List users (Admin only)
 router.get('/:id', authenticateJWT, userController.getUserById);
 
@@ -33,6 +36,5 @@ router.get('/:id', authenticateJWT, userController.getUserById);
 router.put('/:id', authenticateJWT, authorizeRole(['Administrator']), userValidationRules(), validate, userController.updateUser);
 
 router.patch('/changePassword', authenticateJWT, changePasswordValidationRules(), validate, userController.changePassword);
-
 
 module.exports = router;

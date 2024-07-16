@@ -414,3 +414,17 @@ exports.getUserById = async (req, res, next) => {
   }
 };
 
+exports.getAllUsernames = async (req, res, next) => {
+  try {
+    let users = await User.findAll({
+      attributes: ['username']
+    });
+
+    users = users.map(result => result.username);
+
+    res.status(200).json(users);
+  } catch (error) {
+    next(new AppError(error.message, 500));
+  }
+};
+

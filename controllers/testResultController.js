@@ -3,6 +3,7 @@ const TestResult = require('../models/testResult');
 const User = require('../models/user');
 const AppError = require('../utils/AppError');
 const { Sequelize } = require('sequelize');
+const { Op } = require('sequelize');
 
 exports.createTestResult = async (req, res, next) => {
   try {
@@ -69,6 +70,35 @@ exports.getUniqueBatchNumbers = async (req, res, next) => {
     const batchNumbers = uniqueBatchNumbers.map(result => result.batchNumber);
 
     res.status(200).json({ batchNumbers });
+  } catch (error) {
+    next(new AppError(error.message, 500));
+  }
+};
+
+exports.filterTestResults = async (req, res, next) => {
+  try {
+    const { fromDate, toDate, batchNumber } = req.query;
+
+    const whereClause = {};
+
+    if (fromDate) {
+      whereClause.createdAt = { [Op.gte]: new Date(fromDate) };
+    }
+
+    if (toDate) {
+      whereClause.createdAt = whereClause.createdAt || {};
+      whereClause.createdAt[Op.lte] = new Date(toDate);
+    }
+
+    if (batchNumber) {
+      whereClause.batchNumber = batchNumber;
+    }
+
+    const testResults = await TestResult.findAll({
+      where: whereClause,
+    });
+
+    res.status(200).json(testResults);
   } catch (error) {
     next(new AppError(error.message, 500));
   }

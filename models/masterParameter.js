@@ -11,64 +11,112 @@ const MasterParameter = sequelize.define('MasterParameter', {
     type: DataTypes.INTEGER,
     defaultValue: 125,
     validate: {
-      min: 0,
-      max: 200
+      min: {
+        args: [0],
+        msg: 'Gasket Pressure must be at least 0 and cannot exceed 200'
+      },
+      max: {
+        args: [200],
+        msg: 'Gasket Pressure must be at least 0 and cannot exceed 200'
+      },
     }
   },
   gasketPressureAlarmTime: {
     type: DataTypes.INTEGER,
     defaultValue: 30,
     validate: {
-      min: 0,
-      max: 120
+      min: {
+        args: [0],
+        msg: 'Gasket Pressure Alarm Time must be at least 0 and cannot exceed 120'
+      },
+      max: {
+        args: [120],
+        msg: 'Gasket Pressure Alarm Time must be at least 0 and cannot exceed 120'
+      },
     }
   },
   glovePressureAlarmTime: {
     type: DataTypes.INTEGER,
     defaultValue: 300,
     validate: {
-      min: 0,
-      max: 600
+      min: {
+        args: [0],
+        msg: 'Glove Pressure Alarm Time must be at least 0 and cannot exceed 600'
+      },
+      max: {
+        args: [600],
+        msg: 'Glove Pressure Alarm Time must be at least 0 and cannot exceed 600'
+      },
     }
   },
   pressurePursuingPressure: {
     type: DataTypes.INTEGER,
     defaultValue: 850,
     validate: {
-      min: 0,
-      max: 1500
+      min: {
+        args: [0],
+        msg: 'Pressure Pursuing must be at least 0 and cannot exceed 1500'
+      },
+      max: {
+        args: [1500],
+        msg: 'Pressure Pursuing must be at least 0 and cannot exceed 1500'
+      }
     }
   },
   pressurePursuingTime: {
     type: DataTypes.INTEGER,
     defaultValue: 30,
     validate: {
-      min: 0,
-      max: 120
+      min: {
+        args: [0],
+        msg: 'Pressure Pursuing Time must be at least 0 and cannot exceed 120'
+      },
+      max: {
+        args: [120],
+        msg: 'Pressure Pursuing Time must be at least 0 and cannot exceed 120'
+      },
     }
   },
   glovePressure: {
     type: DataTypes.INTEGER,
     defaultValue: 1000,
     validate: {
-      min: 0,
-      max: 1500
+      min: {
+        args: [0],
+        msg: 'Glove Pressure must be at least 0 and cannot exceed 1500'
+      },
+      max: {
+        args: [1500],
+        msg: 'Glove Pressure must be at least 0 and cannot exceed 1500'
+      }
     }
   },
   valveOnTime: {
     type: DataTypes.INTEGER,
     defaultValue: 500,
     validate: {
-      min: 0,
-      max: 10000
+      min: {
+        args: [0],
+        msg: 'Valve On Time must be at least 0 and cannot exceed 10000'
+      },
+      max: {
+        args: [10000],
+        msg: 'Valve On Time must be at least 0 and cannot exceed 10000'
+      },
     }
   },
   valveOffTime: {
     type: DataTypes.INTEGER,
     defaultValue: 500,
     validate: {
-      min: 0,
-      max: 10000
+      min: {
+        args: [0],
+        msg: 'Valve Off Time must be at least 0 and cannot exceed 10000'
+      },
+      max: {
+        args: [10000],
+        msg: 'Valve Off Time must be at least 0 and cannot exceed 10000'
+      },
     }
   },
   motor1: {

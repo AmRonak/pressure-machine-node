@@ -72,7 +72,7 @@ const validate = (req, res, next) => {
     return next();
   }
   const extractedErrors = [];
-  errors.array().map(err => extractedErrors.push({ [err.path]: err.msg }));
+  errors.array().map(err => extractedErrors.push( `${err.msg}` ));
 
   return res.status(422).json({
     status: "error",
@@ -81,7 +81,7 @@ const validate = (req, res, next) => {
       "status": "error",
       "isOperational": false
     },
-    message: extractedErrors,
+    message: extractedErrors[0],
   });
 };
 

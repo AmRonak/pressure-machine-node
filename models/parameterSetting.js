@@ -45,7 +45,13 @@ const ParameterSetting = sequelize.define('ParameterSetting', {
   },
   leakTestStatus: {
     type: DataTypes.ENUM('Before', 'After'),
-    defaultValue: 'Before'
+    defaultValue: 'Before',
+    validate: {
+      isIn: {
+        args: [['Before', 'After']],
+        msg: 'Leak Test Status must be Before or After'
+      }
+    }
   },
   printComment: {
     type: DataTypes.STRING,

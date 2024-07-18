@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
+    "seedPermissions": "node seeders/seedPermissions.js",
     "build": "echo 'Build step here' && exit 0",
     "test": "echo 'Running tests' && exit 0"
   },

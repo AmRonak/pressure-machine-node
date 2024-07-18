@@ -1,7 +1,7 @@
 const express = require('express');
 const { body } = require('express-validator');
 const { validate } = require('../middleware/validators');
-const { authenticateJWT } = require('../middleware/auth');
+const { authenticateJWT, checkPermission } = require('../middleware/auth');
 const testResultController = require('../controllers/testResultController');
 
 const router = express.Router();
@@ -30,6 +30,6 @@ router.post(
 
 router.get('/batchNumbers', authenticateJWT, testResultController.getUniqueBatchNumbers);
 
-router.get('/filter', authenticateJWT, testResultController.filterTestResults);
+router.get('/filter', authenticateJWT, checkPermission('Report'), testResultController.filterTestResults);
 
 module.exports = router;

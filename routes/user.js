@@ -1,5 +1,5 @@
 const express = require('express');
-const { authenticateJWT, authorizeRole } = require('../middleware/auth');
+const { authenticateJWT, authorizeRole, checkPermission } = require('../middleware/auth');
 const { userValidationRules, loginValidationRules, validate, changePasswordValidationRules } = require('../middleware/validators');
 const userController = require('../controllers/userController');
 
@@ -9,7 +9,7 @@ const router = express.Router();
 router.post(
     '/register',
     authenticateJWT,
-    authorizeRole(['Administrator']),
+    checkPermission('User Module'),
     userValidationRules(),
     validate,
     userController.registerUser
@@ -21,10 +21,10 @@ router.post('/login', loginValidationRules(), validate, userController.loginUser
 router.get('/profile', authenticateJWT, userController.currentProfile);
 
 // Block/Unblock users (Admin only)
-router.post('/block', authenticateJWT, authorizeRole(['Administrator']), userController.blockUser);
+router.post('/block', authenticateJWT, checkPermission('User Module'), userController.blockUser);
 
 // List users (Admin only)
-router.get('/', authenticateJWT, authorizeRole(['Administrator']), userController.listUsers);
+router.get('/', authenticateJWT, checkPermission('User Module'), userController.listUsers);
 
 // List of usernames
 router.get('/usernames', authenticateJWT, userController.getAllUsernames);
@@ -33,7 +33,7 @@ router.get('/usernames', authenticateJWT, userController.getAllUsernames);
 router.get('/:id', authenticateJWT, userController.getUserById);
 
 // Update user details (Admin only)
-router.put('/:id', authenticateJWT, authorizeRole(['Administrator']), userValidationRules(), validate, userController.updateUser);
+router.put('/:id', authenticateJWT, checkPermission('User Module'), userValidationRules(), validate, userController.updateUser);
 
 router.patch('/changePassword', authenticateJWT, changePasswordValidationRules(), validate, userController.changePassword);
 

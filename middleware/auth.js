@@ -1,6 +1,7 @@
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
-const getmac = require('getmac')
+const getmac = require('getmac');
+const Permission = require('../models/permission');
 
 const authenticateJWT = (req, res, next) => {
     const token = req.header('Authorization');
@@ -29,4 +30,18 @@ const authorizeRole = (roles) => {
     };
 };
 
-module.exports = { authenticateJWT, authorizeRole };
+const checkPermission = (module) => {
+    return async (req, res, next) => {
+      const userRole = req.user.role;
+  
+      const permission = await Permission.findOne({ where: { module } });
+  
+      if (!permission || !permission[userRole]) {
+        return res.status(403).json({ message: 'Access denied' });
+      }
+  
+      next();
+    };
+  };
+
+module.exports = { authenticateJWT, authorizeRole, checkPermission };

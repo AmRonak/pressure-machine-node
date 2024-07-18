@@ -41,7 +41,6 @@ exports.updateParameterSettings = async (req, res, next) => {
 
   try {
     const parameterSetting = await ParameterSetting.findOne({ where: { macId } });
-    let oldParameterSetting = {...parameterSetting.dataValues};
 
     if (!parameterSetting) {
       // Ensure only Administrators and Managers can update default settings
@@ -161,6 +160,9 @@ exports.updateParameterSettings = async (req, res, next) => {
         }
       });
     } else {
+
+      let oldParameterSetting = { ...parameterSetting.dataValues };
+
       // Ensure only Administrators and Managers can update default settings
       if (companyName !== undefined || departmentName !== undefined || equipmentName !== undefined || equipmentSerialNo !== undefined || defaultComment !== undefined) {
         if (req.user.userLevel !== 'Administrator' && req.user.userLevel !== 'Manager') {

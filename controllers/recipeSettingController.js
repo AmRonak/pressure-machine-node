@@ -14,77 +14,94 @@ exports.updateRecipeSetting = async (req, res, next) => {
 
     if (!recipeSetting) return next(new AppError('Recipe setting not found', 404));
 
+    let oldRecipeSetting = { ...recipeSetting.dataValues };
+
     if (initialPressure !== undefined && initialPressure !== recipeSetting.initialPressure) {
-      await AuditLog.create({
-        userId: req.user.id,
-        macId: req.macAddress,
-        log: `Initial Pressure Changed`,
-        oldValue: recipeSetting.initialPressure,
-        newValue: initialPressure,
-        category: 'general'
-      });
       recipeSetting.initialPressure = initialPressure;
     }
 
     if (setPressure !== undefined && setPressure !== recipeSetting.setPressure) {
-      await AuditLog.create({
-        userId: req.user.id,
-        macId: req.macAddress,
-        log: `Set Pressure Changed`,
-        oldValue: recipeSetting.setPressure,
-        newValue: setPressure,
-        category: 'general'
-      });
       recipeSetting.setPressure = setPressure;
     }
     
     if (leakTestPressure !== undefined && leakTestPressure !== recipeSetting.leakTestPressure) {
-      await AuditLog.create({
-        userId: req.user.id,
-        macId: req.macAddress,
-        log: `Leak Test Pressure Changed`,
-        oldValue: recipeSetting.leakTestPressure,
-        newValue: leakTestPressure,
-        category: 'general'
-      });
       recipeSetting.leakTestPressure = leakTestPressure;
     }
     if (lowerTestPressure !== undefined && lowerTestPressure !== recipeSetting.lowerTestPressure) {
-      await AuditLog.create({
-        userId: req.user.id,
-        macId: req.macAddress,
-        log: `Lower Test Pressure Changed`,
-        oldValue: recipeSetting.lowerTestPressure,
-        newValue: lowerTestPressure,
-        category: 'general'
-      });
       recipeSetting.lowerTestPressure = lowerTestPressure;
     }
     if (stabilizationTime !== undefined && stabilizationTime !== recipeSetting.stabilizationTime) {      
-      await AuditLog.create({
-        userId: req.user.id,
-        macId: req.macAddress,
-        log: `Stabilization Time Changed`,
-        oldValue: recipeSetting.stabilizationTime,
-        newValue: stabilizationTime,
-        category: 'general'
-      });
       recipeSetting.stabilizationTime = stabilizationTime;
     }
     if (testTime !== undefined && testTime !== recipeSetting.testTime) {
-      await AuditLog.create({
-        userId: req.user.id,
-        macId: req.macAddress,
-        log: `Test Time Changed`,
-        oldValue: recipeSetting.testTime,
-        newValue: testTime,
-        category: 'general'
-      });
       recipeSetting.testTime = testTime;
     }
     recipeSetting.comment = comment;
 
     await recipeSetting.save();
+
+    if (initialPressure !== undefined && initialPressure !== oldRecipeSetting.initialPressure) {
+      await AuditLog.create({
+        userId: req.user.id,
+        macId: req.macAddress,
+        log: `Initial Pressure Changed`,
+        oldValue: oldRecipeSetting.initialPressure,
+        newValue: initialPressure,
+        category: 'general'
+      });
+    }
+
+    if (setPressure !== undefined && setPressure !== oldRecipeSetting.setPressure) {
+      await AuditLog.create({
+        userId: req.user.id,
+        macId: req.macAddress,
+        log: `Set Pressure Changed`,
+        oldValue: oldRecipeSetting.setPressure,
+        newValue: setPressure,
+        category: 'general'
+      });
+    }
+    
+    if (leakTestPressure !== undefined && leakTestPressure !== oldRecipeSetting.leakTestPressure) {
+      await AuditLog.create({
+        userId: req.user.id,
+        macId: req.macAddress,
+        log: `Leak Test Pressure Changed`,
+        oldValue: oldRecipeSetting.leakTestPressure,
+        newValue: leakTestPressure,
+        category: 'general'
+      });
+    }
+    if (lowerTestPressure !== undefined && lowerTestPressure !== oldRecipeSetting.lowerTestPressure) {
+      await AuditLog.create({
+        userId: req.user.id,
+        macId: req.macAddress,
+        log: `Lower Test Pressure Changed`,
+        oldValue: oldRecipeSetting.lowerTestPressure,
+        newValue: lowerTestPressure,
+        category: 'general'
+      });
+    }
+    if (stabilizationTime !== undefined && stabilizationTime !== oldRecipeSetting.stabilizationTime) {      
+      await AuditLog.create({
+        userId: req.user.id,
+        macId: req.macAddress,
+        log: `Stabilization Time Changed`,
+        oldValue: oldRecipeSetting.stabilizationTime,
+        newValue: stabilizationTime,
+        category: 'general'
+      });
+    }
+    if (testTime !== undefined && testTime !== oldRecipeSetting.testTime) {
+      await AuditLog.create({
+        userId: req.user.id,
+        macId: req.macAddress,
+        log: `Test Time Changed`,
+        oldValue: oldRecipeSetting.testTime,
+        newValue: testTime,
+        category: 'general'
+      });
+    }
 
     res.status(200).json(recipeSetting);
   } catch (error) {

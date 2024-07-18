@@ -233,20 +233,61 @@ exports.updateUser = async (req, res, next) => {
 
     if (!user) return next(new AppError('User not found', 400));
 
+    let oldUserData = { ...user.dataValues };
+
     if (username !== undefined && username !== user.username) {
-      await AuditLog.create({
-        userId: req.user.id,
-        macId: req.macAddress,
-        log: `Username Changed`,
-        oldValue: user.username,
-        newValue: username,
-        category: 'general',
-        updatedUserId: user.id
-      });
       user.username = username;
     }
     
     if (password !== undefined && password !== user.password) {
+      user.password = password;
+    }
+
+    if (userLevel !== undefined && userLevel !== user.userLevel) {
+      user.userLevel = userLevel;
+    }
+
+    if (attempts !== undefined && attempts !== user.attempts) {
+      user.attempts = attempts;
+    }
+
+    if (autoLogoutTime !== undefined && autoLogoutTime !== user.autoLogoutTime) {
+      user.autoLogoutTime = autoLogoutTime;
+    }
+
+    if (passwordExpiry !== undefined && passwordExpiry !== user.passwordExpiry) {
+      user.passwordExpiry = passwordExpiry;
+    }
+
+    if (expiryDaysNotification !== undefined && expiryDaysNotification !== user.expiryDaysNotification) {
+      user.expiryDaysNotification = expiryDaysNotification;
+    }
+
+    if (autoUnblockTime !== undefined && autoUnblockTime !== user.autoUnblockTime) {
+      user.autoUnblockTime = autoUnblockTime;
+    }
+
+    if (pin !== undefined && parseInt(pin) !== user.pin) {
+      user.pin = pin;
+    }
+    
+    user.comment = comment || user.comment;
+
+    await user.save();
+
+    if (username !== undefined && username !== oldUserData.username) {
+      await AuditLog.create({
+        userId: req.user.id,
+        macId: req.macAddress,
+        log: `Username Changed`,
+        oldValue: oldUserData.username,
+        newValue: username,
+        category: 'general',
+        updatedUserId: oldUserData.id
+      });
+    }
+    
+    if (password !== undefined && password !== oldUserData.password) {
       await AuditLog.create({
         userId: req.user.id,
         macId: req.macAddress,
@@ -254,105 +295,93 @@ exports.updateUser = async (req, res, next) => {
         oldValue: null,
         newValue: null,
         category: 'general',
-        updatedUserId: user.id
+        updatedUserId: oldUserData.id
       });
-      user.password = password;
     }
 
-    if (userLevel !== undefined && userLevel !== user.userLevel) {
+    if (userLevel !== undefined && userLevel !== oldUserData.userLevel) {
       await AuditLog.create({
         userId: req.user.id,
         macId: req.macAddress,
         log: `User Level Changed`,
-        oldValue: user.userLevel,
+        oldValue: oldUserData.userLevel,
         newValue: userLevel,
         category: 'general',
-        updatedUserId: user.id
+        updatedUserId: oldUserData.id
       });
-      user.userLevel = userLevel;
     }
 
-    if (attempts !== undefined && attempts !== user.attempts) {
+    if (attempts !== undefined && attempts !== oldUserData.attempts) {
       await AuditLog.create({
         userId: req.user.id,
         macId: req.macAddress,
         log: `Attempts Changed`,
-        oldValue: user.attempts,
+        oldValue: oldUserData.attempts,
         newValue: attempts,
         category: 'general',
-        updatedUserId: user.id
+        updatedUserId: oldUserData.id
       });
-      user.attempts = attempts;
     }
 
-    if (autoLogoutTime !== undefined && autoLogoutTime !== user.autoLogoutTime) {
+    if (autoLogoutTime !== undefined && autoLogoutTime !== oldUserData.autoLogoutTime) {
       await AuditLog.create({
         userId: req.user.id,
         macId: req.macAddress,
         log: `Auto Logout Time Changed`,
-        oldValue: user.autoLogoutTime,
+        oldValue: oldUserData.autoLogoutTime,
         newValue: autoLogoutTime,
         category: 'general',
-        updatedUserId: user.id
+        updatedUserId: oldUserData.id
       });
-      user.autoLogoutTime = autoLogoutTime;
     }
 
-    if (passwordExpiry !== undefined && passwordExpiry !== user.passwordExpiry) {
+    if (passwordExpiry !== undefined && parseInt(passwordExpiry) !== oldUserData.passwordExpiry) {
       await AuditLog.create({
         userId: req.user.id,
         macId: req.macAddress,
         log: `Password Expiry Changed`,
-        oldValue: user.passwordExpiry,
+        oldValue: oldUserData.passwordExpiry,
         newValue: passwordExpiry,
         category: 'general',
-        updatedUserId: user.id
+        updatedUserId: oldUserData.id
       });
-      user.passwordExpiry = passwordExpiry;
     }
 
-    if (expiryDaysNotification !== undefined && expiryDaysNotification !== user.expiryDaysNotification) {
+    if (expiryDaysNotification !== undefined && expiryDaysNotification !== oldUserData.expiryDaysNotification) {
       await AuditLog.create({
         userId: req.user.id,
         macId: req.macAddress,
         log: `Expiry Days Notification Changed`,
-        oldValue: user.expiryDaysNotification,
+        oldValue: oldUserData.expiryDaysNotification,
         newValue: expiryDaysNotification,
         category: 'general',
-        updatedUserId: user.id
+        updatedUserId: oldUserData.id
       });
-      user.expiryDaysNotification = expiryDaysNotification;
     }
 
-    if (autoUnblockTime !== undefined && autoUnblockTime !== user.autoUnblockTime) {
+    if (autoUnblockTime !== undefined && autoUnblockTime !== oldUserData.autoUnblockTime) {
       await AuditLog.create({
         userId: req.user.id,
         macId: req.macAddress,
         log: `Auto Unblock Time Changed`,
-        oldValue: user.autoUnblockTime,
+        oldValue: oldUserData.autoUnblockTime,
         newValue: autoUnblockTime,
         category: 'general',
-        updatedUserId: user.id
+        updatedUserId: oldUserData.id
       });
-      user.autoUnblockTime = autoUnblockTime;
     }
 
-    if (pin !== undefined && parseInt(pin) !== user.pin) {
+    if (pin !== undefined && pin !== oldUserData.pin) {
       await AuditLog.create({
         userId: req.user.id,
         macId: req.macAddress,
         log: `Pin Changed`,
-        oldValue: user.pin,
+        oldValue: oldUserData.pin,
         newValue: pin,
         category: 'general',
-        updatedUserId: user.id
+        updatedUserId: oldUserData.id
       });
-      user.pin = pin;
     }
-    
-    user.comment = comment || user.comment;
-
-    await user.save();
 
     res.status(200).json(user);
   } catch (err) {

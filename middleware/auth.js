@@ -12,7 +12,7 @@ const authenticateJWT = (req, res, next) => {
     try {
         const verified = jwt.verify(jwtToken, process.env.JWT_SECRET);
         const macAddress = getmac.default();
-        // console.log("macAddress ", macAddress);
+        console.log("verified ", verified);
         req.user = verified;
         req.macAddress = macAddress
         next();
@@ -32,11 +32,10 @@ const authorizeRole = (roles) => {
 
 const checkPermission = (module) => {
     return async (req, res, next) => {
-      const userRole = req.user.role;
-  
+      const userRole = req.user.userLevel;
       const permission = await Permission.findOne({ where: { module } });
   
-      if (!permission || !permission[userRole]) {
+      if (!permission || !permission[userRole.toLowerCase()]) {
         return res.status(403).json({ message: 'Access denied' });
       }
   

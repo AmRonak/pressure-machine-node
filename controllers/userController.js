@@ -7,6 +7,7 @@ const { Op } = require('sequelize');
 const recipeSetting = require('../models/recipeSetting');
 const getmac = require('getmac');
 const Permission = require('../models/permission');
+const { daysUntilExpiration } = require('../utils/helper');
 
 exports.createAdmin = async () => {
   try {
@@ -145,6 +146,16 @@ exports.currentProfile = async (req, res) => {
   try {
     const user = req.user;
 
+    const currentUser = await User.findByPk(user.id);
+    console.log("expiryDaysNotification ", currentUser.expiryDaysNotification);
+
+    const daysLeft = daysUntilExpiration(user.exp);
+    console.log("daysLeft", daysLeft);
+    let tokenExpirationInfo = null;
+    if (daysLeft <= currentUser.expiryDaysNotification) {
+      tokenExpirationInfo = `Token will expire in ${daysLeft} days`;
+    }
+
     const permissions = await Permission.findAll();
     
     // Filter modules based on user role
@@ -152,7 +163,7 @@ exports.currentProfile = async (req, res) => {
 
     res.status(200).json({
       message: 'This is a secured profile route',
-      user: {...req.user, permissions: accessibleModules.map(module => module.id)},
+      user: {...req.user, permissions: accessibleModules.map(module => module.id), tokenExpirationInfo},
     });
   } catch (err) {
     res.status(500).json({ error: err.message });

@@ -1,11 +1,11 @@
 const express = require('express');
-const { authenticateJWT, authorizeRole, checkPermission } = require('../middleware/auth');
+const { authenticateJWT } = require('../middleware/auth');
 const { userValidationRules, loginValidationRules, validate, changePasswordValidationRules } = require('../middleware/validators');
 const userController = require('../controllers/userController');
 
 const router = express.Router();
 
-// User registration endpoint (Admin only)
+// User registration endpoint
 router.post(
     '/register',
     authenticateJWT,
@@ -19,19 +19,19 @@ router.post('/login', loginValidationRules(), validate, userController.loginUser
 
 router.get('/profile', authenticateJWT, userController.currentProfile);
 
-// Block/Unblock users (Admin only)
+// Block/Unblock users
 router.post('/block', authenticateJWT, userController.blockUser);
 
-// List users (Admin only)
+// List users
 router.get('/', authenticateJWT, userController.listUsers);
 
 // List of usernames
 router.get('/usernames', authenticateJWT, userController.getAllUsernames);
 
-// List users (Admin only)
+// List users
 router.get('/:id', authenticateJWT, userController.getUserById);
 
-// Update user details (Admin only)
+// Update user details
 router.put('/:id', authenticateJWT,  userValidationRules(), validate, userController.updateUser);
 
 router.patch('/changePassword', authenticateJWT, changePasswordValidationRules(), validate, userController.changePassword);

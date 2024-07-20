@@ -12,7 +12,6 @@ const authenticateJWT = (req, res, next) => {
     try {
         const verified = jwt.verify(jwtToken, process.env.JWT_SECRET);
         const macAddress = getmac.default();
-        console.log("verified ", verified);
         req.user = verified;
         req.macAddress = macAddress
         next();

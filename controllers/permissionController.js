@@ -33,7 +33,6 @@ exports.updatePermissions = async (req, res, next) => {
 
     await transaction.commit();
 
-    // Fetch updated permissions
     const updatedPermissions = await Permission.findAll();
 
     res.status(200).json(updatedPermissions);

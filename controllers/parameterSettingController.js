@@ -1,4 +1,3 @@
-// controllers/parameterSettingController.js
 const AuditLog = require('../models/auditLog');
 const ParameterSetting = require('../models/parameterSetting');
 const AppError = require('../utils/AppError');

@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../sequelize'); // Adjust the path as needed
-const User = require('./user'); // Adjust the path as needed
+const sequelize = require('../sequelize');
+const User = require('./user');
 
 const AuditLog = sequelize.define('AuditLog', {
   userId: {

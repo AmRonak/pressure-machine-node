@@ -5,7 +5,8 @@ const AuditLog = require('../models/auditLog');
 const AppError = require('../utils/AppError');
 const { Op } = require('sequelize');
 const recipeSetting = require('../models/recipeSetting');
-const getmac = require('getmac')
+const getmac = require('getmac');
+const Permission = require('../models/permission');
 
 exports.createAdmin = async () => {
   try {
@@ -140,11 +141,22 @@ exports.loginUser = async (req, res) => {
   res.json({ token });
 };
 
-exports.currentProfile = (req, res) => {
-  res.json({
-    message: 'This is a secured profile route',
-    user: req.user
-  });
+exports.currentProfile = async (req, res) => {
+  try {
+    const user = req.user;
+
+    const permissions = await Permission.findAll();
+    
+    // Filter modules based on user role
+    const accessibleModules = permissions.filter(permission => permission[user.userLevel.toLowerCase()]);
+
+    res.status(200).json({
+      message: 'This is a secured profile route',
+      user: {...req.user, permissions: accessibleModules.map(module => module.id)},
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 }
 
 exports.listUsers = async (req, res, next) => {

@@ -1,54 +1,47 @@
 const Permission = require('../models/permission');
-const sequelize = require('../sequelize');
 
 const seedPermissions = async () => {
   try {
     await Permission.bulkCreate([
       {
-        module: 'User Module',
-        superAdmin: true,
+        module: 'Test Mode',
         administrator: true,
         manager: false,
         supervisor: false,
         operator: false,
       },
       {
-        module: 'Parameter Settings',
-        superAdmin: true,
+        module: 'RECIPE SETTING',
         administrator: true,
         manager: false,
         supervisor: false,
         operator: false,
       },
       {
-        module: 'Recipe Settings',
-        superAdmin: true,
+        module: 'SET PARAMETER',
         administrator: true,
         manager: false,
         supervisor: false,
         operator: false,
       },
       {
-        module: 'Master Settings',
-        superAdmin: true,
+        module: 'USER PROFILE',
         administrator: true,
         manager: false,
         supervisor: false,
         operator: false,
       },
       {
-        module: 'Test Result',
-        superAdmin: true,
+        module: 'Reports',
         administrator: true,
         manager: false,
         supervisor: false,
         operator: false,
       },
       {
-        module: 'Report',
-        superAdmin: true,
+        module: 'USER MANAGEMENT',
         administrator: true,
-        manager: false,
+        manager: true,
         supervisor: false,
         operator: false,
       }

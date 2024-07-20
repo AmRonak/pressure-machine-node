@@ -7,10 +7,6 @@ const Permission = sequelize.define('Permission', {
     allowNull: false,
     unique: true
   },
-  superAdmin: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: true
-  },
   administrator: {
     type: DataTypes.BOOLEAN,
     defaultValue: true

@@ -149,7 +149,7 @@ exports.currentProfile = async (req, res) => {
     const currentUser = await User.findByPk(user.id);
 
     const daysLeft = daysUntilExpiration(user.exp);
-    
+
     let tokenExpirationInfo = null;
     if (daysLeft <= currentUser.expiryDaysNotification) {
       tokenExpirationInfo = `Token will expire in ${daysLeft} days`;
@@ -333,7 +333,7 @@ exports.updateUser = async (req, res, next) => {
       });
     }
 
-    if (attempts !== undefined && attempts !== oldUserData.attempts) {
+    if (attempts !== undefined && parseInt(attempts) !== oldUserData.attempts) {
       await AuditLog.create({
         userId: req.user.id,
         macId: req.macAddress,
@@ -345,7 +345,7 @@ exports.updateUser = async (req, res, next) => {
       });
     }
 
-    if (autoLogoutTime !== undefined && autoLogoutTime !== oldUserData.autoLogoutTime) {
+    if (autoLogoutTime !== undefined && parseInt(autoLogoutTime) !== oldUserData.autoLogoutTime) {
       await AuditLog.create({
         userId: req.user.id,
         macId: req.macAddress,
@@ -369,7 +369,7 @@ exports.updateUser = async (req, res, next) => {
       });
     }
 
-    if (expiryDaysNotification !== undefined && expiryDaysNotification !== oldUserData.expiryDaysNotification) {
+    if (expiryDaysNotification !== undefined && parseInt(expiryDaysNotification) !== oldUserData.expiryDaysNotification) {
       await AuditLog.create({
         userId: req.user.id,
         macId: req.macAddress,
@@ -381,7 +381,7 @@ exports.updateUser = async (req, res, next) => {
       });
     }
 
-    if (autoUnblockTime !== undefined && autoUnblockTime !== oldUserData.autoUnblockTime) {
+    if (autoUnblockTime !== undefined && parseInt(autoUnblockTime) !== oldUserData.autoUnblockTime) {
       await AuditLog.create({
         userId: req.user.id,
         macId: req.macAddress,

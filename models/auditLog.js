@@ -43,10 +43,10 @@ const AuditLog = sequelize.define('AuditLog', {
 });
 
 // Establish the relationship with the User model
-User.hasMany(AuditLog, { foreignKey: 'userId' });
-AuditLog.belongsTo(User, { foreignKey: 'userId' });
+User.hasMany(AuditLog, { foreignKey: 'userId', as: 'UserLogs' });
+AuditLog.belongsTo(User, { foreignKey: 'userId', as: 'User' });
 
-User.hasMany(AuditLog, { foreignKey: 'updatedUserId' });
-AuditLog.belongsTo(User, { foreignKey: 'updatedUserId' });
+User.hasMany(AuditLog, { foreignKey: 'updatedUserId', as: 'UpdatedUserLogs' });
+AuditLog.belongsTo(User, { foreignKey: 'updatedUserId', as: 'UpdatedUser' });
 
 module.exports = AuditLog;

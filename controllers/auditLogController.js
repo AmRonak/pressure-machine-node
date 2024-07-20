@@ -55,11 +55,11 @@ exports.filterAuditLogs = async (req, res, next) => {
 
     let auditLogs = await AuditLog.findAll({
       where: whereClause,
-      include: [{
-        model: User,
-      }],
+      include: [
+        { model: User, as: 'User', attributes: ['username'] },
+        { model: User, as: 'UpdatedUser', attributes: ['username'] }
+      ]
     });
-
     res.status(200).json(auditLogs);
   } catch (error) {
     next(new AppError(error.message, 500));

@@ -147,10 +147,9 @@ exports.currentProfile = async (req, res) => {
     const user = req.user;
 
     const currentUser = await User.findByPk(user.id);
-    console.log("expiryDaysNotification ", currentUser.expiryDaysNotification);
 
     const daysLeft = daysUntilExpiration(user.exp);
-    console.log("daysLeft", daysLeft);
+    
     let tokenExpirationInfo = null;
     if (daysLeft <= currentUser.expiryDaysNotification) {
       tokenExpirationInfo = `Token will expire in ${daysLeft} days`;

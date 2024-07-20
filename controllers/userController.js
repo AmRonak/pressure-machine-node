@@ -135,7 +135,7 @@ exports.loginUser = async (req, res) => {
     newValue: null,
     category: 'general'
   });
-  const token = jwt.sign({ id: user.id, userLevel: user.userLevel }, process.env.JWT_SECRET, { expiresIn: `${user.passwordExpiry}d` });
+  const token = jwt.sign({ id: user.id, userLevel: user.userLevel, username: user.username }, process.env.JWT_SECRET, { expiresIn: `${user.passwordExpiry}d` });
 
   res.json({ token });
 };

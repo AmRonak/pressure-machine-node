@@ -16,7 +16,7 @@ const User = sequelize.define('User', {
     },
     userLevel: {
         type: DataTypes.ENUM,
-        values: ['Operator', 'Supervisor', 'Manager', 'Administrator'],
+        values: ['Operator', 'Supervisor', 'Manager', 'Administrator', 'SuperAdmin'],
         allowNull: false
     },
     attempts: {

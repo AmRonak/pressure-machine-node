@@ -42,7 +42,6 @@ sequelize.sync({
             }
         })
             .then(result => {
-                // console.log("result", result);
                 if (!result) {
                     createAdmin()
                         .then(res => {

@@ -1,17 +1,15 @@
-const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const AuditLog = require('../models/auditLog');
 const AppError = require('../utils/AppError');
 const { Op } = require('sequelize');
-const recipeSetting = require('../models/recipeSetting');
 const getmac = require('getmac');
 const Permission = require('../models/permission');
 const { daysUntilExpiration } = require('../utils/helper');
 
 exports.createAdmin = async () => {
   try {
-    const newUser = await User.create({
+    await User.create({
       username: "admin",
       password: "Admin@123",
       userLevel: "Administrator",
@@ -22,8 +20,6 @@ exports.createAdmin = async () => {
       "expiryDaysNotification": 10,
       "autoUnblockTime": 15
     });
-
-    // res.status(201).json(newUser);
   } catch (err) {
     console.log("err", err);
   }
@@ -32,7 +28,6 @@ exports.createAdmin = async () => {
 exports.registerUser = async (req, res, next) => {
   try {
     const { username, password, userLevel, attempts, autoLogoutTime, passwordExpiry, expiryDaysNotification, autoUnblockTime, comment, pin, active } = req.body;
-    // const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await User.create({
       username,
@@ -175,6 +170,9 @@ exports.listUsers = async (req, res, next) => {
       where: {
         id: {
           [Op.ne]: req.user.id // Exclude current user
+        },
+        userLevel: {
+          [Op.ne]: "SuperAdmin" // Exclude SuperAdmin userLevel
         }
       },
       attributes: { exclude: ['password'] } // Exclude password from results

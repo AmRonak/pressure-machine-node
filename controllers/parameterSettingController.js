@@ -1,6 +1,27 @@
 const AuditLog = require('../models/auditLog');
 const ParameterSetting = require('../models/parameterSetting');
 const AppError = require('../utils/AppError');
+const getmac = require('getmac');
+
+exports.getCompanyName = async (req, res, next) => {
+  const macId = getmac.default();
+
+  try {
+    let parameterSetting = await ParameterSetting.findOne({ where: { macId } });
+
+    if (!parameterSetting || !parameterSetting.companyName) {
+      return res.status(200).json({
+        companyName: null,
+      });
+    }
+
+    res.status(200).json({
+      companyName: parameterSetting.companyName,
+    });
+  } catch (error) {
+    next(new AppError(error.message, 500));
+  }
+};
 
 exports.getParameterSettings = async (req, res, next) => {
   const macId = req.macAddress;

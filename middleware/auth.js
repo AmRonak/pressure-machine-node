@@ -13,9 +13,7 @@ const authenticateJWT = async (req, res, next) => {
     try {
         const verified = jwt.verify(jwtToken, process.env.JWT_SECRET);
         const macAddress = getmac.default();
-        console.log("verified ", verified);
         const user = await User.findByPk(verified.id);
-        console.log("user", user);
         if (!user.active) {
             return res.status(403).json({ message: `Account is blocked.` });
         }

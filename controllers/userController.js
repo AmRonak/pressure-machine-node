@@ -70,6 +70,10 @@ exports.loginUser = async (req, res) => {
   const now = new Date();
 
   if (!user.active) {
+    if (!user.blockTime) {
+      return res.status(403).json({ message: `Account is blocked.` });
+    }
+
     const blockTime = new Date(user.blockTime);
     const unblockTime = new Date(blockTime.getTime() + user.autoUnblockTime * 60000);
 
@@ -214,7 +218,6 @@ exports.blockUser = async (req, res, next) => {
           throw new AppError(`User ${user.username} is already blocked`, 400);
         }
         user.active = false;
-        user.blockTime = new Date();
       } else if (action === 'unblock') {
         if (user.active) {
           throw new AppError(`User ${user.username} is not blocked`, 400);

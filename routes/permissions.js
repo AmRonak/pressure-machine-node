@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { authenticateJWT, authorizeRole } = require('../middleware/auth');
+const { authenticateJWT } = require('../middleware/auth');
 const permissionController = require('../controllers/permissionController');
 
-router.get('/', authenticateJWT, authorizeRole(['Administrator', 'Super Admin']), permissionController.getPermissions);
-router.put('/', authenticateJWT, authorizeRole(['Administrator', 'Super Admin']), permissionController.updatePermissions);
+router.get('/', authenticateJWT, permissionController.getPermissions);
+router.put('/', authenticateJWT, permissionController.updatePermissions);
 
 module.exports = router;

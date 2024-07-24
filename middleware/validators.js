@@ -13,7 +13,7 @@ const userValidationRules = () => {
       }
       return true;
     }),
-    body('userLevel').isIn(['Operator', 'Supervisor', 'Manager', 'Administrator']).withMessage('Invalid user level'),
+    body('userLevel').isIn(['Operator', 'Supervisor', 'Manager', 'Administrator', 'SuperAdmin']).withMessage('Invalid user level'),
     body('attempts').isInt({ min: 0 }).withMessage('Number of attempts must be a positive integer'),
     body('autoLogoutTime').isInt({ min: 0 }).withMessage('Auto logout time must be a positive integer'),
     body('passwordExpiry').isInt({ min: 0 }).withMessage('Password expiry must be a positive integer'),

@@ -37,14 +37,13 @@ exports.getParameterSettings = async (req, res, next) => {
 exports.updateParameterSettings = async (req, res, next) => {
   const macId = req.macAddress;
   const { companyName, departmentName, equipmentName, equipmentSerialNo, defaultComment, areaName, batchName, batchNo, leakTestStatus, printComment } = req.body;
-
   try {
     const parameterSetting = await ParameterSetting.findOne({ where: { macId } });
 
     if (!parameterSetting) {
       // Ensure only Administrators and Managers can update default settings
       if (companyName !== undefined || departmentName !== undefined || equipmentName !== undefined || equipmentSerialNo !== undefined || defaultComment !== undefined) {
-        if (req.user.userLevel !== 'Administrator' && req.user.userLevel !== 'Manager') {
+        if (req.user.userLevel !== 'Administrator' && req.user.userLevel !== 'Manager' && req.user.userLevel !== 'SuperAdmin') {
           return next(new AppError('You do not have permission to update default settings', 403));
         }
       }
@@ -52,7 +51,7 @@ exports.updateParameterSettings = async (req, res, next) => {
       let parameterSetting = await ParameterSetting.create({ macId, ...req.body });
 
       if (companyName !== undefined || departmentName !== undefined || equipmentName !== undefined || equipmentSerialNo !== undefined || defaultComment !== undefined) {
-        if (req.user.userLevel !== 'Administrator' && req.user.userLevel !== 'Manager') {
+        if (req.user.userLevel !== 'Administrator' && req.user.userLevel !== 'Manager' && req.user.userLevel !== 'SuperAdmin') {
           return next(new AppError('You do not have permission to update default settings', 403));
         }
 
@@ -164,7 +163,7 @@ exports.updateParameterSettings = async (req, res, next) => {
 
       // Ensure only Administrators and Managers can update default settings
       if (companyName !== undefined || departmentName !== undefined || equipmentName !== undefined || equipmentSerialNo !== undefined || defaultComment !== undefined) {
-        if (req.user.userLevel !== 'Administrator' && req.user.userLevel !== 'Manager') {
+        if (req.user.userLevel !== 'Administrator' && req.user.userLevel !== 'Manager' && req.user.userLevel !== 'SuperAdmin') {
           return next(new AppError('You do not have permission to update default settings', 403));
         }
 
@@ -202,7 +201,7 @@ exports.updateParameterSettings = async (req, res, next) => {
       await parameterSetting.save();
 
       if (companyName !== undefined || departmentName !== undefined || equipmentName !== undefined || equipmentSerialNo !== undefined || defaultComment !== undefined) {
-        if (req.user.userLevel !== 'Administrator' || req.user.userLevel !== 'Manager') {
+        if (req.user.userLevel !== 'Administrator' || req.user.userLevel !== 'Manager' && req.user.userLevel !== 'SuperAdmin') {
           if (companyName !== undefined && companyName !== oldParameterSetting.companyName) {
             await AuditLog.create({
               userId: req.user.id,

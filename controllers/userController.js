@@ -170,16 +170,15 @@ exports.currentProfile = async (req, res) => {
 
 exports.listUsers = async (req, res, next) => {
   try {
+    let whereClause = {};
+    if (req.user.userLevel !== "SuperAdmin") {
+      whereClause["userLevel"] = {
+        [Op.ne]: "SuperAdmin" // Exclude SuperAdmin userLevel
+      }
+    }
+
     const users = await User.findAll({
-      where: {
-        id: {
-          [Op.ne]: req.user.id // Exclude current user
-        },
-        userLevel: {
-          [Op.ne]: "SuperAdmin" // Exclude SuperAdmin userLevel
-        }
-      },
-      attributes: { exclude: ['password'] } // Exclude password from results
+      where: whereClause
     });
 
     res.json(users);

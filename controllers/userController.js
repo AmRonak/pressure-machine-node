@@ -27,7 +27,7 @@ exports.createAdmin = async () => {
 
 exports.registerUser = async (req, res, next) => {
   try {
-    const { username, password, userLevel, attempts, autoLogoutTime, passwordExpiry, expiryDaysNotification, autoUnblockTime, comment, pin, active } = req.body;
+    const { username, password, userLevel, attempts, autoLogoutTime, passwordExpiry, expiryDaysNotification, autoUnblockTime, comments, pin, active } = req.body;
 
     const newUser = await User.create({
       username,
@@ -38,7 +38,7 @@ exports.registerUser = async (req, res, next) => {
       passwordExpiry,
       expiryDaysNotification,
       autoUnblockTime,
-      comment,
+      comments,
       pin,
       active
     });
@@ -188,7 +188,7 @@ exports.listUsers = async (req, res, next) => {
     const users = await User.findAll({
       where: whereClause
     });
-
+    
     res.json(users);
   } catch (err) {
     next(new AppError(err.message, 500));
@@ -259,7 +259,7 @@ exports.blockUser = async (req, res, next) => {
 
 exports.updateUser = async (req, res, next) => {
   try {
-    const { username, password, userLevel, attempts, autoLogoutTime, passwordExpiry, expiryDaysNotification, autoUnblockTime, comment, pin } = req.body;
+    const { username, password, userLevel, attempts, autoLogoutTime, passwordExpiry, expiryDaysNotification, autoUnblockTime, comments, pin } = req.body;
     const user = await User.findByPk(req.params.id);
 
     if (!user) return next(new AppError('User not found', 400));
@@ -302,8 +302,8 @@ exports.updateUser = async (req, res, next) => {
       user.pin = pin;
     }
     
-    if (comment !== undefined && comment !== user.comment) {
-      user.comment = comment;
+    if (comments !== undefined && comments !== user.comments) {
+      user.comments = comments;
     }
 
     await user.save();
@@ -418,13 +418,13 @@ exports.updateUser = async (req, res, next) => {
       });
     }
 
-    if (comment !== undefined && comment !== oldUserData.comment) {
+    if (comments !== undefined && comments !== oldUserData.comments) {
       await AuditLog.create({
         userId: req.user.id,
         macId: req.macAddress,
-        log: `Auto Unblock Time Changed`,
-        oldValue: oldUserData.comment,
-        newValue: comment,
+        log: `User Comments Changed`,
+        oldValue: oldUserData.comments,
+        newValue: comments,
         category: 'general',
         updatedUserId: oldUserData.id
       });

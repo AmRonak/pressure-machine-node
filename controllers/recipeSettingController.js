@@ -108,7 +108,7 @@ exports.updateRecipeSetting = async (req, res, next) => {
         await AuditLog.create({
           userId: req.user.id,
           macId: req.macAddress,
-          log: `Test Time Changed`,
+          log: `Recipe Setting Comment Changed`,
           oldValue: oldRecipeSetting.comment,
           newValue: comment,
           category: 'general'

@@ -123,7 +123,7 @@ exports.updateParameterSettings = async (req, res, next) => {
             await AuditLog.create({
               userId: req.user.id,
               macId: req.macAddress,
-              log: `Equipment Serial No. Changed`,
+              log: `Default Comment Changed`,
               oldValue: "-",
               newValue: defaultComment,
               category: 'general'
@@ -176,7 +176,7 @@ exports.updateParameterSettings = async (req, res, next) => {
           await AuditLog.create({
             userId: req.user.id,
             macId: req.macAddress,
-            log: `Equipment Serial No. Changed`,
+            log: `Print Comment Changed`,
             oldValue: "-",
             newValue: printComment,
             category: 'general'
@@ -297,7 +297,7 @@ exports.updateParameterSettings = async (req, res, next) => {
               await AuditLog.create({
                 userId: req.user.id,
                 macId: req.macAddress,
-                log: `Leak Test Changed`,
+                log: `Default Comment Changed`,
                 oldValue: oldParameterSetting.defaultComment,
                 newValue: defaultComment,
                 category: 'general'
@@ -349,7 +349,7 @@ exports.updateParameterSettings = async (req, res, next) => {
           await AuditLog.create({
             userId: req.user.id,
             macId: req.macAddress,
-            log: `Leak Test Changed`,
+            log: `Print Comment Changed`,
             oldValue: oldParameterSetting.printComment,
             newValue: printComment,
             category: 'general'

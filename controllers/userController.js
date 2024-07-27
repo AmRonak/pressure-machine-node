@@ -43,15 +43,17 @@ exports.registerUser = async (req, res, next) => {
       active
     });
 
-    await AuditLog.create({
-      userId: req.user.id,
-      macId: req.macAddress,
-      log: `User Created `,
-      oldValue: null,
-      newValue: null,
-      category: 'general',
-      updatedUserId: newUser.id
-    });
+    if (req.user.userLevel !== 'SuperAdmin') {
+      await AuditLog.create({
+        userId: req.user.id,
+        macId: req.macAddress,
+        log: `User Created `,
+        oldValue: null,
+        newValue: null,
+        category: 'general',
+        updatedUserId: newUser.id
+      });
+    }
 
     res.status(201).json(newUser);
   } catch (err) {
@@ -102,40 +104,46 @@ exports.loginUser = async (req, res) => {
       user.active = false;
       user.blockTime = now;
       await user.save();
-      await AuditLog.create({
-        userId: user.id,
-        macId: macAddress,
-        log: `User is blocked due to max login attempts`,
-        oldValue: null,
-        newValue: null,
-        category: 'general'
-      });
+      if (user.userLevel !== 'SuperAdmin') {
+        await AuditLog.create({
+          userId: user.id,
+          macId: macAddress,
+          log: `User is blocked due to max login attempts`,
+          oldValue: null,
+          newValue: null,
+          category: 'general'
+        });
+      }
       return res.status(403).json({ error: 'User is blocked due to max login attempts' });
     }
 
     await user.save();
-    await AuditLog.create({
-      userId: user.id,
-      macId: macAddress,
-      log: `Incorrect password. Login attempts left: ${user.attempts - user.failedAttempts}`,
-      oldValue: null,
-      newValue: null,
-      category: 'general'
-    });
+    if (user.userLevel !== 'SuperAdmin') {
+      await AuditLog.create({
+        userId: user.id,
+        macId: macAddress,
+        log: `Incorrect password. Login attempts left: ${user.attempts - user.failedAttempts}`,
+        oldValue: null,
+        newValue: null,
+        category: 'general'
+      });
+    }
     return res.status(400).json({ message: `Incorrect password. Login attempts left: ${user.attempts - user.failedAttempts}` });
   }
 
   // Reset failed attempts on successful login
   user.failedAttempts = 0;
   await user.save();
-  await AuditLog.create({
-    userId: user.id,
-    macId: macAddress,
-    log: `User Logged In`,
-    oldValue: null,
-    newValue: null,
-    category: 'general'
-  });
+  if (user.userLevel !== 'SuperAdmin') {
+    await AuditLog.create({
+      userId: user.id,
+      macId: macAddress,
+      log: `User Logged In`,
+      oldValue: null,
+      newValue: null,
+      category: 'general'
+    });
+  }
   const token = jwt.sign({ id: user.id, userLevel: user.userLevel, username: user.username }, process.env.JWT_SECRET, { expiresIn: `${user.passwordExpiry}d` });
 
   res.json({ token });
@@ -224,16 +232,17 @@ exports.blockUser = async (req, res, next) => {
         user.active = true;
         user.blockTime = null;
       }
-
-      await AuditLog.create({
-        userId: req.user.id,
-        macId: req.macAddress,
-        log: `User ${action === 'block' ? "Blocked" : "Unblocked"}`,
-        oldValue: null,
-        newValue: null,
-        category: 'general',
-        updatedUserId: user.id
-      });
+      if (req.user.userLevel !== 'SuperAdmin') {
+        await AuditLog.create({
+          userId: req.user.id,
+          macId: req.macAddress,
+          log: `User ${action === 'block' ? "Blocked" : "Unblocked"}`,
+          oldValue: null,
+          newValue: null,
+          category: 'general',
+          updatedUserId: user.id
+        });
+      }
       return user.save();
     });
 
@@ -297,32 +306,34 @@ exports.updateUser = async (req, res, next) => {
 
     await user.save();
 
-    if (username !== undefined && username !== oldUserData.username) {
-      await AuditLog.create({
-        userId: req.user.id,
-        macId: req.macAddress,
-        log: `Username Changed`,
-        oldValue: oldUserData.username,
-        newValue: username,
-        category: 'general',
-        updatedUserId: oldUserData.id
-      });
-    }
-    
-    if (password !== undefined && password !== oldUserData.password) {
-      await AuditLog.create({
-        userId: req.user.id,
-        macId: req.macAddress,
-        log: `Password Changed`,
-        oldValue: null,
-        newValue: null,
-        category: 'general',
-        updatedUserId: oldUserData.id
-      });
-    }
+    if (req.user.userLevel !== 'SuperAdmin') {
 
-    if (userLevel !== undefined && userLevel !== oldUserData.userLevel) {
-      await AuditLog.create({
+      if (username !== undefined && username !== oldUserData.username) {
+        await AuditLog.create({
+          userId: req.user.id,
+          macId: req.macAddress,
+          log: `Username Changed`,
+          oldValue: oldUserData.username,
+          newValue: username,
+          category: 'general',
+          updatedUserId: oldUserData.id
+        });
+      }
+      
+      if (password !== undefined && password !== oldUserData.password) {
+        await AuditLog.create({
+          userId: req.user.id,
+          macId: req.macAddress,
+          log: `Password Changed`,
+          oldValue: null,
+          newValue: null,
+          category: 'general',
+          updatedUserId: oldUserData.id
+        });
+      }
+      
+      if (userLevel !== undefined && userLevel !== oldUserData.userLevel) {
+        await AuditLog.create({
         userId: req.user.id,
         macId: req.macAddress,
         log: `User Level Changed`,
@@ -332,7 +343,7 @@ exports.updateUser = async (req, res, next) => {
         updatedUserId: oldUserData.id
       });
     }
-
+    
     if (attempts !== undefined && parseInt(attempts) !== oldUserData.attempts) {
       await AuditLog.create({
         userId: req.user.id,
@@ -344,7 +355,7 @@ exports.updateUser = async (req, res, next) => {
         updatedUserId: oldUserData.id
       });
     }
-
+    
     if (autoLogoutTime !== undefined && parseInt(autoLogoutTime) !== oldUserData.autoLogoutTime) {
       await AuditLog.create({
         userId: req.user.id,
@@ -356,7 +367,7 @@ exports.updateUser = async (req, res, next) => {
         updatedUserId: oldUserData.id
       });
     }
-
+    
     if (passwordExpiry !== undefined && parseInt(passwordExpiry) !== oldUserData.passwordExpiry) {
       await AuditLog.create({
         userId: req.user.id,
@@ -368,7 +379,7 @@ exports.updateUser = async (req, res, next) => {
         updatedUserId: oldUserData.id
       });
     }
-
+    
     if (expiryDaysNotification !== undefined && parseInt(expiryDaysNotification) !== oldUserData.expiryDaysNotification) {
       await AuditLog.create({
         userId: req.user.id,
@@ -380,7 +391,7 @@ exports.updateUser = async (req, res, next) => {
         updatedUserId: oldUserData.id
       });
     }
-
+    
     if (autoUnblockTime !== undefined && parseInt(autoUnblockTime) !== oldUserData.autoUnblockTime) {
       await AuditLog.create({
         userId: req.user.id,
@@ -392,19 +403,21 @@ exports.updateUser = async (req, res, next) => {
         updatedUserId: oldUserData.id
       });
     }
-
+  
     if (pin !== undefined && pin !== oldUserData.pin) {
       await AuditLog.create({
         userId: req.user.id,
         macId: req.macAddress,
         log: `Pin Changed`,
-        oldValue: oldUserData.pin,
+        oldValue: null,
         newValue: pin,
         category: 'general',
-        updatedUserId: oldUserData.id
+        updatedUserId: null
       });
     }
-
+  
+  }
+    
     res.status(200).json(user);
   } catch (err) {
     next(new AppError(err.message, 500));
@@ -428,15 +441,17 @@ exports.changePassword = async (req, res, next) => {
 
     user.password = newPassword;
     await user.save();
-    await AuditLog.create({
-      userId: req.user.id,
-      macId: req.macAddress,
-      log: `Password Changed`,
-      oldValue: null,
-      newValue: null,
-      category: 'general',
-      updatedUserId: user.id
-    });
+    if (req.user.userLevel !== 'SuperAdmin') {
+      await AuditLog.create({
+        userId: req.user.id,
+        macId: req.macAddress,
+        log: `Password Changed`,
+        oldValue: null,
+        newValue: null,
+        category: 'general',
+        updatedUserId: user.id
+      });
+    }
 
     res.status(200).json({ message: 'Password changed successfully' });
   } catch (error) {
@@ -468,6 +483,11 @@ exports.getUserById = async (req, res, next) => {
 exports.getAllUsernames = async (req, res, next) => {
   try {
     let users = await User.findAll({
+      where: {
+        userLevel : {
+          [Op.ne] : "SuperAdmin"
+        }
+      },
       attributes: ['username']
     });
 

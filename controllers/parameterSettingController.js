@@ -119,6 +119,16 @@ exports.updateParameterSettings = async (req, res, next) => {
               category: 'general'
             });
           }
+          if (defaultComment !== undefined) {
+            await AuditLog.create({
+              userId: req.user.id,
+              macId: req.macAddress,
+              log: `Equipment Serial No. Changed`,
+              oldValue: "-",
+              newValue: defaultComment,
+              category: 'general'
+            });
+          }
         }
   
         // Update print parameters (any user can update)
@@ -159,6 +169,16 @@ exports.updateParameterSettings = async (req, res, next) => {
             log: `Leak Test Changed`,
             oldValue: "-",
             newValue: leakTestStatus,
+            category: 'general'
+          });
+        }
+        if (printComment !== undefined) {
+          await AuditLog.create({
+            userId: req.user.id,
+            macId: req.macAddress,
+            log: `Equipment Serial No. Changed`,
+            oldValue: "-",
+            newValue: printComment,
             category: 'general'
           });
         }
@@ -205,7 +225,9 @@ exports.updateParameterSettings = async (req, res, next) => {
         if (equipmentSerialNo !== undefined && equipmentSerialNo !== parameterSetting.equipmentSerialNo) {
           parameterSetting.equipmentSerialNo = equipmentSerialNo;
         }
-        if (defaultComment !== undefined) parameterSetting.defaultComment = defaultComment;
+        if (defaultComment !== undefined && defaultComment !== parameterSetting.defaultComment) {
+          parameterSetting.defaultComment = defaultComment;
+        }
       }
 
       // Update print parameters (any user can update)
@@ -221,7 +243,9 @@ exports.updateParameterSettings = async (req, res, next) => {
       if (leakTestStatus !== undefined && leakTestStatus !== parameterSetting.leakTestStatus) {
         parameterSetting.leakTestStatus = leakTestStatus;
       }
-      if (printComment !== undefined) parameterSetting.printComment = printComment;
+      if (printComment !== undefined && printComment !== parameterSetting.printComment) {
+        parameterSetting.printComment = printComment;
+      }
 
       await parameterSetting.save();
 
@@ -269,6 +293,16 @@ exports.updateParameterSettings = async (req, res, next) => {
                 category: 'general'
               });
             }
+            if (defaultComment !== undefined && defaultComment !== oldParameterSetting.defaultComment) {
+              await AuditLog.create({
+                userId: req.user.id,
+                macId: req.macAddress,
+                log: `Leak Test Changed`,
+                oldValue: oldParameterSetting.defaultComment,
+                newValue: defaultComment,
+                category: 'general'
+              });
+            }
           }
         }
         if (areaName !== undefined && areaName !== oldParameterSetting.areaName) {
@@ -308,6 +342,16 @@ exports.updateParameterSettings = async (req, res, next) => {
             log: `Leak Test Changed`,
             oldValue: oldParameterSetting.leakTestStatus,
             newValue: leakTestStatus,
+            category: 'general'
+          });
+        }
+        if (printComment !== undefined && printComment !== oldParameterSetting.printComment) {
+          await AuditLog.create({
+            userId: req.user.id,
+            macId: req.macAddress,
+            log: `Leak Test Changed`,
+            oldValue: oldParameterSetting.printComment,
+            newValue: printComment,
             category: 'general'
           });
         }

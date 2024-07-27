@@ -302,7 +302,9 @@ exports.updateUser = async (req, res, next) => {
       user.pin = pin;
     }
     
-    user.comment = comment || user.comment;
+    if (comment !== undefined && comment !== user.comment) {
+      user.comment = comment;
+    }
 
     await user.save();
 
@@ -413,6 +415,18 @@ exports.updateUser = async (req, res, next) => {
         newValue: pin,
         category: 'general',
         updatedUserId: null
+      });
+    }
+
+    if (comment !== undefined && comment !== oldUserData.comment) {
+      await AuditLog.create({
+        userId: req.user.id,
+        macId: req.macAddress,
+        log: `Auto Unblock Time Changed`,
+        oldValue: oldUserData.comment,
+        newValue: comment,
+        category: 'general',
+        updatedUserId: oldUserData.id
       });
     }
   

@@ -36,7 +36,9 @@ exports.updateRecipeSetting = async (req, res, next) => {
     if (testTime !== undefined && testTime !== recipeSetting.testTime) {
       recipeSetting.testTime = testTime;
     }
-    recipeSetting.comment = comment;
+    if (comment !== undefined && comment !== recipeSetting.comment) {
+      recipeSetting.comment = comment;
+    }
 
     await recipeSetting.save();
 
@@ -99,6 +101,16 @@ exports.updateRecipeSetting = async (req, res, next) => {
           log: `Test Time Changed`,
           oldValue: oldRecipeSetting.testTime,
           newValue: testTime,
+          category: 'general'
+        });
+      }
+      if (comment !== undefined && comment !== oldRecipeSetting.comment) {
+        await AuditLog.create({
+          userId: req.user.id,
+          macId: req.macAddress,
+          log: `Test Time Changed`,
+          oldValue: oldRecipeSetting.comment,
+          newValue: comment,
           category: 'general'
         });
       }

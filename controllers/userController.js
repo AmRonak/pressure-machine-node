@@ -144,7 +144,7 @@ exports.loginUser = async (req, res) => {
       category: 'general'
     });
   }
-  const token = jwt.sign({ id: user.id, userLevel: user.userLevel, username: user.username }, process.env.JWT_SECRET, { expiresIn: `${user.passwordExpiry}d` });
+  const token = jwt.sign({ id: user.id, userLevel: user.userLevel, username: user.username }, process.env.JWT_SECRET, { expiresIn: `${user.autoLogoutTime}m` });
 
   res.json({ token });
 };
@@ -188,7 +188,7 @@ exports.listUsers = async (req, res, next) => {
     const users = await User.findAll({
       where: whereClause
     });
-    
+
     res.json(users);
   } catch (err) {
     next(new AppError(err.message, 500));

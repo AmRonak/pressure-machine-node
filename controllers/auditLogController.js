@@ -60,7 +60,12 @@ exports.filterAuditLogs = async (req, res, next) => {
     let auditLogs = await AuditLog.findAll({
       where: whereClause,
       include: [
-        { model: User, as: 'User', attributes: ['username'] },
+        {
+          model: User, 
+          as: 'User', 
+          attributes: ['username', 'userLevel'],
+          where: { userLevel: { [Op.ne]: 'SuperAdmin' } }
+        },
         { model: User, as: 'UpdatedUser', attributes: ['username'] }
       ]
     });

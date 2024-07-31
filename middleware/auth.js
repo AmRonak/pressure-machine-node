@@ -37,15 +37,41 @@ const authorizeRole = (roles) => {
 
 const checkPermission = (module) => {
     return async (req, res, next) => {
-      const userRole = req.user.userLevel;
-      const permission = await Permission.findOne({ where: { module } });
+        const userRole = req.user.userLevel;
+        const permission = await Permission.findOne({ where: { module } });
+
+        if (!permission || !permission[userRole.toLowerCase()]) {
+            return res.status(403).json({ message: 'Access denied' });
+        }
+
+        next();
+    };
+};
+
+const checkTokenExpiration = (req, res, next) => {
+    const token = req.headers.authorization.split(' ')[1];
+    
+    if (!token) {
+      return next(new AppError('No token provided', 401));
+    }
   
-      if (!permission || !permission[userRole.toLowerCase()]) {
-        return res.status(403).json({ message: 'Access denied' });
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+      if (err) {
+        return next(new AppError('Token is invalid or expired', 401));
+      }
+  
+      const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
+      const expirationTime = decoded.exp; // Token expiration time in seconds
+  
+      if (expirationTime - currentTime < 15 * 60) { // If less than 15 minutes
+        req.isTokenExpiring = true;
+        req.user = decoded;
+      } else {
+        req.isTokenExpiring = false;
       }
   
       next();
-    };
+    });
   };
 
-module.exports = { authenticateJWT, authorizeRole, checkPermission };
+module.exports = { authenticateJWT, authorizeRole, checkPermission, checkTokenExpiration };

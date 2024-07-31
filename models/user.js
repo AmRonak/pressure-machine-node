@@ -39,6 +39,11 @@ const User = sequelize.define('User', {
         type: DataTypes.INTEGER,
         defaultValue: 60 // Default to 30 minutes
     },
+    passwordUpdatedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        defaultValue: DataTypes.NOW
+    },
     passwordExpiry: {
         type: DataTypes.INTEGER,
         defaultValue: 90 // Default to 90 days

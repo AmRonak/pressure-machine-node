@@ -155,12 +155,26 @@ exports.currentProfile = async (req, res) => {
 
     const currentUser = await User.findByPk(user.id);
 
-    const daysLeft = daysUntilExpiration(user.exp);
+    const passwordExpiryDays = currentUser.passwordExpiry;
+    const passwordExpiryDate = new Date(currentUser.passwordUpdatedAt);
+    // const passwordExpiryDate = new Date(passwordLastUpdated);
+    passwordExpiryDate.setDate(passwordExpiryDate.getDate() + passwordExpiryDays);
 
+    const currentDate = new Date();
+    const daysLeft = Math.floor((passwordExpiryDate - currentDate) / (1000 * 60 * 60 * 24));
     let tokenExpirationInfo = null;
-    if (daysLeft <= currentUser.expiryDaysNotification) {
-      tokenExpirationInfo = `Token will expire in ${daysLeft} days`;
+    let passwordExpired = false;
+
+    if (daysLeft <= 2 && daysLeft > 0) {
+      tokenExpirationInfo = `Password will expire in ${daysLeft} days`;
+    } else if (daysLeft <= 0) {
+      passwordExpired = true;
     }
+
+    // let tokenExpirationInfo = null;
+    // if (daysLeft <= currentUser.expiryDaysNotification) {
+    //   tokenExpirationInfo = `Token will expire in ${daysLeft} days`;
+    // }
 
     const permissions = await Permission.findAll();
     
@@ -169,7 +183,7 @@ exports.currentProfile = async (req, res) => {
 
     res.status(200).json({
       message: 'This is a secured profile route',
-      user: {...req.user, permissions: accessibleModules.map(module => module.id), tokenExpirationInfo},
+      user: {...req.user, permissions: accessibleModules.map(module => module.id), tokenExpirationInfo, passwordExpired},
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -272,6 +286,7 @@ exports.updateUser = async (req, res, next) => {
     
     if (password !== undefined && password !== user.password) {
       user.password = password;
+      user.passwordUpdatedAt = new Date();
     }
 
     if (userLevel !== undefined && userLevel !== user.userLevel) {
@@ -454,6 +469,7 @@ exports.changePassword = async (req, res, next) => {
     }
 
     user.password = newPassword;
+    user.passwordUpdatedAt = new Date();
     await user.save();
     if (req.user.userLevel !== 'SuperAdmin') {
       await AuditLog.create({

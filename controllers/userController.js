@@ -333,7 +333,8 @@ exports.updateUser = async (req, res, next) => {
           oldValue: oldUserData.username,
           newValue: username,
           category: 'general',
-          updatedUserId: oldUserData.id
+          updatedUserId: oldUserData.id,
+          comment: comments ? comments : ""
         });
       }
       
@@ -345,7 +346,8 @@ exports.updateUser = async (req, res, next) => {
           oldValue: null,
           newValue: null,
           category: 'general',
-          updatedUserId: oldUserData.id
+          updatedUserId: oldUserData.id,
+          comment: comments ? comments : ""
         });
       }
       
@@ -357,7 +359,8 @@ exports.updateUser = async (req, res, next) => {
         oldValue: oldUserData.userLevel,
         newValue: userLevel,
         category: 'general',
-        updatedUserId: oldUserData.id
+        updatedUserId: oldUserData.id,
+        comment: comments ? comments : ""
       });
     }
     
@@ -369,7 +372,8 @@ exports.updateUser = async (req, res, next) => {
         oldValue: oldUserData.attempts,
         newValue: attempts,
         category: 'general',
-        updatedUserId: oldUserData.id
+        updatedUserId: oldUserData.id,
+        comment: comments ? comments : ""
       });
     }
     
@@ -381,7 +385,8 @@ exports.updateUser = async (req, res, next) => {
         oldValue: oldUserData.autoLogoutTime,
         newValue: autoLogoutTime,
         category: 'general',
-        updatedUserId: oldUserData.id
+        updatedUserId: oldUserData.id,
+        comment: comments ? comments : ""
       });
     }
     
@@ -393,7 +398,8 @@ exports.updateUser = async (req, res, next) => {
         oldValue: oldUserData.passwordExpiry,
         newValue: passwordExpiry,
         category: 'general',
-        updatedUserId: oldUserData.id
+        updatedUserId: oldUserData.id,
+        comment: comments ? comments : ""
       });
     }
     
@@ -405,7 +411,8 @@ exports.updateUser = async (req, res, next) => {
         oldValue: oldUserData.expiryDaysNotification,
         newValue: expiryDaysNotification,
         category: 'general',
-        updatedUserId: oldUserData.id
+        updatedUserId: oldUserData.id,
+        comment: comments ? comments : ""
       });
     }
     
@@ -417,7 +424,8 @@ exports.updateUser = async (req, res, next) => {
         oldValue: oldUserData.autoUnblockTime,
         newValue: autoUnblockTime,
         category: 'general',
-        updatedUserId: oldUserData.id
+        updatedUserId: oldUserData.id,
+        comment: comments ? comments : ""
       });
     }
   
@@ -427,21 +435,10 @@ exports.updateUser = async (req, res, next) => {
         macId: req.macAddress,
         log: `Pin Changed`,
         oldValue: null,
-        newValue: pin,
+        newValue: null,
         category: 'general',
-        updatedUserId: null
-      });
-    }
-
-    if (comments !== undefined && comments !== oldUserData.comments) {
-      await AuditLog.create({
-        userId: req.user.id,
-        macId: req.macAddress,
-        log: `User Comments Changed`,
-        oldValue: oldUserData.comments,
-        newValue: comments,
-        category: 'general',
-        updatedUserId: oldUserData.id
+        updatedUserId: oldUserData.id,
+        comment: comments ? comments : ""
       });
     }
   

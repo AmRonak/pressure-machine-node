@@ -86,7 +86,8 @@ exports.updateParameterSettings = async (req, res, next) => {
               log: `Company Name Changed`,
               oldValue: "-",
               newValue: companyName,
-              category: 'general'
+              category: 'general',
+              comment: defaultComment ? defaultComment : ""
             });
           }
           if (departmentName !== undefined) {
@@ -96,7 +97,8 @@ exports.updateParameterSettings = async (req, res, next) => {
               log: `Department Name Changed`,
               oldValue: "-",
               newValue: departmentName,
-              category: 'general'
+              category: 'general',
+              comment: defaultComment ? defaultComment : ""
             });
           }
           if (equipmentName !== undefined) {
@@ -106,7 +108,8 @@ exports.updateParameterSettings = async (req, res, next) => {
               log: `Eqipment Name Changed`,
               oldValue: "-",
               newValue: equipmentName,
-              category: 'general'
+              category: 'general',
+              comment: defaultComment ? defaultComment : ""
             });
           }
           if (equipmentSerialNo !== undefined) {
@@ -116,17 +119,8 @@ exports.updateParameterSettings = async (req, res, next) => {
               log: `Equipment Serial No. Changed`,
               oldValue: "-",
               newValue: equipmentSerialNo,
-              category: 'general'
-            });
-          }
-          if (defaultComment !== undefined) {
-            await AuditLog.create({
-              userId: req.user.id,
-              macId: req.macAddress,
-              log: `Default Comment Changed`,
-              oldValue: "-",
-              newValue: defaultComment,
-              category: 'general'
+              category: 'general',
+              comment: defaultComment ? defaultComment : ""
             });
           }
         }
@@ -139,7 +133,8 @@ exports.updateParameterSettings = async (req, res, next) => {
             log: `Area Name Changed`,
             oldValue: "-",
             newValue: areaName,
-            category: 'general'
+            category: 'general',
+            comment: printComment ? printComment : ""
           });
         }
         if (batchName !== undefined) {
@@ -149,7 +144,8 @@ exports.updateParameterSettings = async (req, res, next) => {
             log: `Batch Name Changed`,
             oldValue: "-",
             newValue: batchName,
-            category: 'general'
+            category: 'general',
+            comment: printComment ? printComment : ""
           });
         }
         if (batchNo !== undefined) {
@@ -159,7 +155,8 @@ exports.updateParameterSettings = async (req, res, next) => {
             log: `Batch No. Changed`,
             oldValue: "-",
             newValue: batchNo,
-            category: 'general'
+            category: 'general',
+            comment: printComment ? printComment : ""
           });
         }
         if (leakTestStatus !== undefined) {
@@ -169,17 +166,8 @@ exports.updateParameterSettings = async (req, res, next) => {
             log: `Leak Test Changed`,
             oldValue: "-",
             newValue: leakTestStatus,
-            category: 'general'
-          });
-        }
-        if (printComment !== undefined) {
-          await AuditLog.create({
-            userId: req.user.id,
-            macId: req.macAddress,
-            log: `Print Comment Changed`,
-            oldValue: "-",
-            newValue: printComment,
-            category: 'general'
+            category: 'general',
+            comment: printComment ? printComment : ""
           });
         }
 
@@ -260,7 +248,8 @@ exports.updateParameterSettings = async (req, res, next) => {
                 log: `Company Name Changed`,
                 oldValue: oldParameterSetting.companyName,
                 newValue: companyName,
-                category: 'general'
+                category: 'general',
+                comment: defaultComment ? defaultComment : ""
               });
             }
             if (departmentName !== undefined && departmentName !== oldParameterSetting.departmentName) {
@@ -270,7 +259,8 @@ exports.updateParameterSettings = async (req, res, next) => {
                 log: `Department Name Changed`,
                 oldValue: oldParameterSetting.departmentName,
                 newValue: departmentName,
-                category: 'general'
+                category: 'general',
+                comment: defaultComment ? defaultComment : ""
               });
             }
             if (equipmentName !== undefined && equipmentName !== oldParameterSetting.equipmentName) {
@@ -280,7 +270,8 @@ exports.updateParameterSettings = async (req, res, next) => {
                 log: `Eqipment Name Changed`,
                 oldValue: oldParameterSetting.equipmentName,
                 newValue: equipmentName,
-                category: 'general'
+                category: 'general',
+                comment: defaultComment ? defaultComment : ""
               });
             }
             if (equipmentSerialNo !== undefined && equipmentSerialNo !== oldParameterSetting.equipmentSerialNo) {
@@ -290,17 +281,8 @@ exports.updateParameterSettings = async (req, res, next) => {
                 log: `Equipment Serial No. Changed`,
                 oldValue: oldParameterSetting.equipmentSerialNo,
                 newValue: equipmentSerialNo,
-                category: 'general'
-              });
-            }
-            if (defaultComment !== undefined && defaultComment !== oldParameterSetting.defaultComment) {
-              await AuditLog.create({
-                userId: req.user.id,
-                macId: req.macAddress,
-                log: `Default Comment Changed`,
-                oldValue: oldParameterSetting.defaultComment,
-                newValue: defaultComment,
-                category: 'general'
+                category: 'general',
+                comment: defaultComment ? defaultComment : ""
               });
             }
           }
@@ -312,7 +294,8 @@ exports.updateParameterSettings = async (req, res, next) => {
             log: `Area Name Changed`,
             oldValue: oldParameterSetting.areaName,
             newValue: areaName,
-            category: 'general'
+            category: 'general',
+            comment: printComment ? printComment : ""
           });
         }
         if (batchName !== undefined && batchName !== oldParameterSetting.batchName) {
@@ -322,7 +305,8 @@ exports.updateParameterSettings = async (req, res, next) => {
             log: `Batch Name Changed`,
             oldValue: oldParameterSetting.batchName,
             newValue: batchName,
-            category: 'general'
+            category: 'general',
+            comment: printComment ? printComment : ""
           });
         }
         if (batchNo !== undefined && batchNo !== oldParameterSetting.batchNo) {
@@ -332,7 +316,8 @@ exports.updateParameterSettings = async (req, res, next) => {
             log: `Batch No. Changed`,
             oldValue: oldParameterSetting.batchNo,
             newValue: batchNo,
-            category: 'general'
+            category: 'general',
+            comment: printComment ? printComment : ""
           });
         }
         if (leakTestStatus !== undefined && leakTestStatus !== oldParameterSetting.leakTestStatus) {
@@ -342,20 +327,10 @@ exports.updateParameterSettings = async (req, res, next) => {
             log: `Leak Test Changed`,
             oldValue: oldParameterSetting.leakTestStatus,
             newValue: leakTestStatus,
-            category: 'general'
+            category: 'general',
+            comment: printComment ? printComment : ""
           });
         }
-        if (printComment !== undefined && printComment !== oldParameterSetting.printComment) {
-          await AuditLog.create({
-            userId: req.user.id,
-            macId: req.macAddress,
-            log: `Print Comment Changed`,
-            oldValue: oldParameterSetting.printComment,
-            newValue: printComment,
-            category: 'general'
-          });
-        }
-
       }
 
       res.status(200).json({

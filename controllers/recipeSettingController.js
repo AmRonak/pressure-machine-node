@@ -51,7 +51,8 @@ exports.updateRecipeSetting = async (req, res, next) => {
           log: `Initial Pressure Changed`,
           oldValue: oldRecipeSetting.initialPressure,
           newValue: initialPressure,
-          category: 'general'
+          category: 'general',
+          comment: comment ? comment : ""
         });
       }
       if (setPressure !== undefined && setPressure !== oldRecipeSetting.setPressure) {
@@ -61,7 +62,8 @@ exports.updateRecipeSetting = async (req, res, next) => {
           log: `Set Pressure Changed`,
           oldValue: oldRecipeSetting.setPressure,
           newValue: setPressure,
-          category: 'general'
+          category: 'general',
+          comment: comment ? comment : ""
         });
       }
       if (leakTestPressure !== undefined && leakTestPressure !== oldRecipeSetting.leakTestPressure) {
@@ -71,7 +73,8 @@ exports.updateRecipeSetting = async (req, res, next) => {
           log: `Leak Test Pressure Changed`,
           oldValue: oldRecipeSetting.leakTestPressure,
           newValue: leakTestPressure,
-          category: 'general'
+          category: 'general',
+          comment: comment ? comment : ""
         });
       }
       if (lowerTestPressure !== undefined && lowerTestPressure !== oldRecipeSetting.lowerTestPressure) {
@@ -81,7 +84,8 @@ exports.updateRecipeSetting = async (req, res, next) => {
           log: `Lower Test Pressure Changed`,
           oldValue: oldRecipeSetting.lowerTestPressure,
           newValue: lowerTestPressure,
-          category: 'general'
+          category: 'general',
+          comment: comment ? comment : ""
         });
       }
       if (stabilizationTime !== undefined && stabilizationTime !== oldRecipeSetting.stabilizationTime) {      
@@ -91,7 +95,8 @@ exports.updateRecipeSetting = async (req, res, next) => {
           log: `Stabilization Time Changed`,
           oldValue: oldRecipeSetting.stabilizationTime,
           newValue: stabilizationTime,
-          category: 'general'
+          category: 'general',
+          comment: comment ? comment : ""
         });
       }
       if (testTime !== undefined && testTime !== oldRecipeSetting.testTime) {
@@ -101,20 +106,10 @@ exports.updateRecipeSetting = async (req, res, next) => {
           log: `Test Time Changed`,
           oldValue: oldRecipeSetting.testTime,
           newValue: testTime,
-          category: 'general'
+          category: 'general',
+          comment: comment ? comment : ""
         });
       }
-      if (comment !== undefined && comment !== oldRecipeSetting.comment) {
-        await AuditLog.create({
-          userId: req.user.id,
-          macId: req.macAddress,
-          log: `Recipe Setting Comment Changed`,
-          oldValue: oldRecipeSetting.comment,
-          newValue: comment,
-          category: 'general'
-        });
-      }
-
     }
 
     res.status(200).json(recipeSetting);

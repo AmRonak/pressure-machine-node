@@ -4,7 +4,7 @@ const AppError = require('../utils/AppError');
 const User = require('../models/user');
 
 exports.createLog = async (req, res, next) => {
-  const { log, oldValue, newValue, category } = req.body;
+  const { log, oldValue, newValue, category, comment } = req.body;
 
   if (req.user.userLevel === "SuperAdmin") {
     next(new AppError("Super Admin does not have permission to create log!", 401));
@@ -17,7 +17,8 @@ exports.createLog = async (req, res, next) => {
       log,
       oldValue,
       newValue,
-      category
+      category,
+      comment
     });
 
     res.status(201).json(auditLog);

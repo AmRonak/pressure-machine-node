@@ -144,7 +144,7 @@ exports.loginUser = async (req, res) => {
       category: 'general'
     });
   }
-  const token = jwt.sign({ id: user.id, userLevel: user.userLevel, username: user.username }, process.env.JWT_SECRET, { expiresIn: `${user.autoLogoutTime}m` });
+  const token = jwt.sign({ id: user.id, userLevel: user.userLevel, username: user.username }, process.env.JWT_SECRET, { expiresIn: `90d` });
 
   res.json({ token });
 };
@@ -183,7 +183,7 @@ exports.currentProfile = async (req, res) => {
 
     res.status(200).json({
       message: 'This is a secured profile route',
-      user: {...req.user, permissions: accessibleModules.map(module => module.id), tokenExpirationInfo, passwordExpired},
+      user: {...req.user, permissions: accessibleModules.map(module => module.id), tokenExpirationInfo, passwordExpired, autoLogoutTime: currentUser.autoLogoutTime},
     });
   } catch (err) {
     res.status(500).json({ error: err.message });

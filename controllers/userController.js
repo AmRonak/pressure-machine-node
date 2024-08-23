@@ -51,7 +51,8 @@ exports.registerUser = async (req, res, next) => {
         oldValue: null,
         newValue: null,
         category: 'general',
-        updatedUserId: newUser.id
+        updatedUserId: newUser.id,
+        comment: comments ? comments : ""
       });
     }
 

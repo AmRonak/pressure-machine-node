@@ -5,7 +5,7 @@ const AppError = require('../utils/AppError');
 const { Op } = require('sequelize');
 const getmac = require('getmac');
 const Permission = require('../models/permission');
-const { daysUntilExpiration } = require('../utils/helper');
+const { daysUntilExpiration, isPasswordExpired } = require('../utils/helper');
 
 exports.createAdmin = async () => {
   try {
@@ -166,10 +166,12 @@ exports.currentProfile = async (req, res) => {
     let tokenExpirationInfo = null;
     let passwordExpired = false;
 
-    if (daysLeft <= 2 && daysLeft > 0) {
-      tokenExpirationInfo = `Password will expire in ${daysLeft} days`;
-    } else if (daysLeft <= 0) {
+    const expired = isPasswordExpired(currentUser.passwordUpdatedAt, currentUser.passwordExpiry);
+
+    if (expired) {
       passwordExpired = true;
+    } else if (daysLeft <= 2 && daysLeft >= 0) {
+      tokenExpirationInfo = `Password will expire in ${daysLeft} days`;
     }
 
     // let tokenExpirationInfo = null;

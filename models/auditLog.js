@@ -11,10 +11,10 @@ const AuditLog = sequelize.define('AuditLog', {
       key: 'id'
     }
   },
-  macId: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
+  // macId: {
+  //   type: DataTypes.STRING,
+  //   allowNull: false
+  // },
   updatedUserId: {
     type: DataTypes.INTEGER,
     allowNull: true,

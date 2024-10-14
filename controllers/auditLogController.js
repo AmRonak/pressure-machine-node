@@ -13,7 +13,7 @@ exports.createLog = async (req, res, next) => {
   try {
     const auditLog = await AuditLog.create({
       userId: req.user.id,
-      macId: req.macAddress,
+      // macId: req.macAddress,
       log,
       oldValue,
       newValue,

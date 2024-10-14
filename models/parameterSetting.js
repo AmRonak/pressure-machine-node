@@ -2,14 +2,14 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../sequelize');
 
 const ParameterSetting = sequelize.define('ParameterSetting', {
-  macId: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: {
-      args: true,
-      msg: 'Setting already available, You can only update it!'
-  }
-  },
+  // macId: {
+  //   type: DataTypes.STRING,
+  //   allowNull: false,
+  //   unique: {
+  //     args: true,
+  //     msg: 'Setting already available, You can only update it!'
+  // }
+  // },
   companyName: {
     type: DataTypes.STRING,
     defaultValue: ''

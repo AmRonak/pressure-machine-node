@@ -1,6 +1,6 @@
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
-const getmac = require('getmac');
+// const getmac = require('getmac');
 const Permission = require('../models/permission');
 const User = require('../models/user');
 
@@ -12,14 +12,14 @@ const authenticateJWT = async (req, res, next) => {
 
     try {
         const verified = jwt.verify(jwtToken, process.env.JWT_SECRET);
-        const macAddress = getmac.default();
+        // const macAddress = getmac.default();
         const user = await User.findByPk(verified.id);
         if (!user.active) {
             return res.status(403).json({ message: `Account is blocked.` });
         }
 
         req.user = verified;
-        req.macAddress = macAddress
+        // req.macAddress = macAddress
         next();
     } catch (err) {
         res.status(400).send(err ? err : 'Invalid Token');

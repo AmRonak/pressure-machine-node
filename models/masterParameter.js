@@ -2,11 +2,11 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../sequelize');
 
 const MasterParameter = sequelize.define('MasterParameter', {
-  macId: {
-    type: DataTypes.STRING,
-    unique: true,
-    allowNull: false
-  },
+  // macId: {
+  //   type: DataTypes.STRING,
+  //   unique: true,
+  //   allowNull: false
+  // },
   gasketPressure: {
     type: DataTypes.INTEGER,
     defaultValue: 125,

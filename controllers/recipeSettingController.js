@@ -3,14 +3,14 @@ const RecipeSetting = require('../models/recipeSetting');
 const AppError = require('../utils/AppError');
 
 exports.updateRecipeSetting = async (req, res, next) => {
-  const macId = req.macAddress;
+  // const macId = req.macAddress;
 
-  if (!macId) return next(new AppError('Can not identify mac id!', 404));
+  // if (!macId) return next(new AppError('Can not identify mac id!', 404));
 
   const { initialPressure, setPressure, leakTestPressure, lowerTestPressure, stabilizationTime, testTime, comment } = req.body;
 
   try {
-    let recipeSetting = await RecipeSetting.findOne({ where: { macId } });
+    let [ recipeSetting ] = await RecipeSetting.findAll();
 
     if (!recipeSetting) return next(new AppError('Recipe setting not found', 404));
 
@@ -47,7 +47,7 @@ exports.updateRecipeSetting = async (req, res, next) => {
       if (initialPressure !== undefined && initialPressure !== oldRecipeSetting.initialPressure) {
         await AuditLog.create({
           userId: req.user.id,
-          macId: req.macAddress,
+          // macId: req.macAddress,
           log: `Initial Pressure Changed`,
           oldValue: oldRecipeSetting.initialPressure,
           newValue: initialPressure,
@@ -58,7 +58,7 @@ exports.updateRecipeSetting = async (req, res, next) => {
       if (setPressure !== undefined && setPressure !== oldRecipeSetting.setPressure) {
         await AuditLog.create({
           userId: req.user.id,
-          macId: req.macAddress,
+          // macId: req.macAddress,
           log: `Set Pressure Changed`,
           oldValue: oldRecipeSetting.setPressure,
           newValue: setPressure,
@@ -69,7 +69,7 @@ exports.updateRecipeSetting = async (req, res, next) => {
       if (leakTestPressure !== undefined && leakTestPressure !== oldRecipeSetting.leakTestPressure) {
         await AuditLog.create({
           userId: req.user.id,
-          macId: req.macAddress,
+          // macId: req.macAddress,
           log: `Leak Test Pressure Changed`,
           oldValue: oldRecipeSetting.leakTestPressure,
           newValue: leakTestPressure,
@@ -80,7 +80,7 @@ exports.updateRecipeSetting = async (req, res, next) => {
       if (lowerTestPressure !== undefined && lowerTestPressure !== oldRecipeSetting.lowerTestPressure) {
         await AuditLog.create({
           userId: req.user.id,
-          macId: req.macAddress,
+          // macId: req.macAddress,
           log: `Lower Test Pressure Changed`,
           oldValue: oldRecipeSetting.lowerTestPressure,
           newValue: lowerTestPressure,
@@ -91,7 +91,7 @@ exports.updateRecipeSetting = async (req, res, next) => {
       if (stabilizationTime !== undefined && stabilizationTime !== oldRecipeSetting.stabilizationTime) {      
         await AuditLog.create({
           userId: req.user.id,
-          macId: req.macAddress,
+          // macId: req.macAddress,
           log: `Stabilization Time Changed`,
           oldValue: oldRecipeSetting.stabilizationTime,
           newValue: stabilizationTime,
@@ -102,7 +102,7 @@ exports.updateRecipeSetting = async (req, res, next) => {
       if (testTime !== undefined && testTime !== oldRecipeSetting.testTime) {
         await AuditLog.create({
           userId: req.user.id,
-          macId: req.macAddress,
+          // macId: req.macAddress,
           log: `Test Time Changed`,
           oldValue: oldRecipeSetting.testTime,
           newValue: testTime,
@@ -119,18 +119,16 @@ exports.updateRecipeSetting = async (req, res, next) => {
 };
 
 exports.getRecipeSetting = async (req, res, next) => {
-  const macId = req.macAddress;
+  // const macId = req.macAddress;
 
-  if (!macId) return next(new AppError('Can not identify mac id!', 404));
+  // if (!macId) return next(new AppError('Can not identify mac id!', 404));
 
   try {
-    let recipeSetting = await RecipeSetting.findOne({ where: { macId } });
+    let [ recipeSetting ] = await RecipeSetting.findAll();
 
     if (!recipeSetting) {
       // Create new record with default Recipe Settings
-      recipeSetting = await RecipeSetting.create({
-        macId
-      });
+      recipeSetting = await RecipeSetting.create();
     }
 
     res.status(200).json(recipeSetting);

@@ -1,13 +1,13 @@
 const AuditLog = require('../models/auditLog');
 const ParameterSetting = require('../models/parameterSetting');
 const AppError = require('../utils/AppError');
-const getmac = require('getmac');
+// const getmac = require('getmac');
 
 exports.getCompanyName = async (req, res, next) => {
-  const macId = getmac.default();
+  // const macId = getmac.default();
 
   try {
-    let parameterSetting = await ParameterSetting.findOne({ where: { macId } });
+    let [ parameterSetting ] = await ParameterSetting.findAll();
 
     if (!parameterSetting || !parameterSetting.companyName) {
       return res.status(200).json({
@@ -24,17 +24,17 @@ exports.getCompanyName = async (req, res, next) => {
 };
 
 exports.getParameterSettings = async (req, res, next) => {
-  const macId = req.macAddress;
+  // const macId = req.macAddress;
 
   try {
-    let parameterSetting = await ParameterSetting.findOne({ where: { macId } });
+    let [ parameterSetting ] = await ParameterSetting.findAll();
 
     if (!parameterSetting) {
       res.status(200).json({ message: "No Parameter Setting Found." })
     }
 
     res.status(200).json({
-      macId: parameterSetting.macId,
+      // macId: parameterSetting.macId,
       defaultParameter: {
         companyName: parameterSetting.companyName,
         departmentName: parameterSetting.departmentName,
@@ -56,10 +56,10 @@ exports.getParameterSettings = async (req, res, next) => {
 };
 
 exports.updateParameterSettings = async (req, res, next) => {
-  const macId = req.macAddress;
+  // const macId = req.macAddress;
   const { companyName, departmentName, equipmentName, equipmentSerialNo, defaultComment, areaName, batchName, batchNo, leakTestStatus, printComment } = req.body;
   try {
-    const parameterSetting = await ParameterSetting.findOne({ where: { macId } });
+    const [ parameterSetting ] = await ParameterSetting.findAll();
 
     if (!parameterSetting) {
       // Ensure only Administrators and Managers can update default settings
@@ -69,7 +69,7 @@ exports.updateParameterSettings = async (req, res, next) => {
         }
       }
 
-      let parameterSetting = await ParameterSetting.create({ macId, ...req.body });
+      let parameterSetting = await ParameterSetting.create({ ...req.body });
 
       if (req.user.userLevel !== 'SuperAdmin') {
 
@@ -82,7 +82,7 @@ exports.updateParameterSettings = async (req, res, next) => {
           if (companyName !== undefined) {
             await AuditLog.create({
               userId: req.user.id,
-              macId: req.macAddress,
+              // macId: req.macAddress,
               log: `Company Name Changed`,
               oldValue: "-",
               newValue: companyName,
@@ -93,7 +93,7 @@ exports.updateParameterSettings = async (req, res, next) => {
           if (departmentName !== undefined) {
             await AuditLog.create({
               userId: req.user.id,
-              macId: req.macAddress,
+              // macId: req.macAddress,
               log: `Department Name Changed`,
               oldValue: "-",
               newValue: departmentName,
@@ -104,7 +104,7 @@ exports.updateParameterSettings = async (req, res, next) => {
           if (equipmentName !== undefined) {
             await AuditLog.create({
               userId: req.user.id,
-              macId: req.macAddress,
+              // macId: req.macAddress,
               log: `Eqipment Name Changed`,
               oldValue: "-",
               newValue: equipmentName,
@@ -115,7 +115,7 @@ exports.updateParameterSettings = async (req, res, next) => {
           if (equipmentSerialNo !== undefined) {
             await AuditLog.create({
               userId: req.user.id,
-              macId: req.macAddress,
+              // macId: req.macAddress,
               log: `Equipment Serial No. Changed`,
               oldValue: "-",
               newValue: equipmentSerialNo,
@@ -129,7 +129,7 @@ exports.updateParameterSettings = async (req, res, next) => {
         if (areaName !== undefined) {
           await AuditLog.create({
             userId: req.user.id,
-            macId: req.macAddress,
+            // macId: req.macAddress,
             log: `Area Name Changed`,
             oldValue: "-",
             newValue: areaName,
@@ -140,7 +140,7 @@ exports.updateParameterSettings = async (req, res, next) => {
         if (batchName !== undefined) {
           await AuditLog.create({
             userId: req.user.id,
-            macId: req.macAddress,
+            // macId: req.macAddress,
             log: `Batch Name Changed`,
             oldValue: "-",
             newValue: batchName,
@@ -151,7 +151,7 @@ exports.updateParameterSettings = async (req, res, next) => {
         if (batchNo !== undefined) {
           await AuditLog.create({
             userId: req.user.id,
-            macId: req.macAddress,
+            // macId: req.macAddress,
             log: `Batch No. Changed`,
             oldValue: "-",
             newValue: batchNo,
@@ -162,7 +162,7 @@ exports.updateParameterSettings = async (req, res, next) => {
         if (leakTestStatus !== undefined) {
           await AuditLog.create({
             userId: req.user.id,
-            macId: req.macAddress,
+            // macId: req.macAddress,
             log: `Leak Test Changed`,
             oldValue: "-",
             newValue: leakTestStatus,
@@ -174,7 +174,7 @@ exports.updateParameterSettings = async (req, res, next) => {
       }
 
       return res.status(200).json({
-        macId: parameterSetting.macId,
+        // macId: parameterSetting.macId,
         defaultParameter: {
           companyName: parameterSetting.companyName,
           departmentName: parameterSetting.departmentName,
@@ -244,7 +244,7 @@ exports.updateParameterSettings = async (req, res, next) => {
             if (companyName !== undefined && companyName !== oldParameterSetting.companyName) {
               await AuditLog.create({
                 userId: req.user.id,
-                macId: req.macAddress,
+                // macId: req.macAddress,
                 log: `Company Name Changed`,
                 oldValue: oldParameterSetting.companyName,
                 newValue: companyName,
@@ -255,7 +255,7 @@ exports.updateParameterSettings = async (req, res, next) => {
             if (departmentName !== undefined && departmentName !== oldParameterSetting.departmentName) {
               await AuditLog.create({
                 userId: req.user.id,
-                macId: req.macAddress,
+                // macId: req.macAddress,
                 log: `Department Name Changed`,
                 oldValue: oldParameterSetting.departmentName,
                 newValue: departmentName,
@@ -266,7 +266,7 @@ exports.updateParameterSettings = async (req, res, next) => {
             if (equipmentName !== undefined && equipmentName !== oldParameterSetting.equipmentName) {
               await AuditLog.create({
                 userId: req.user.id,
-                macId: req.macAddress,
+                // macId: req.macAddress,
                 log: `Eqipment Name Changed`,
                 oldValue: oldParameterSetting.equipmentName,
                 newValue: equipmentName,
@@ -277,7 +277,7 @@ exports.updateParameterSettings = async (req, res, next) => {
             if (equipmentSerialNo !== undefined && equipmentSerialNo !== oldParameterSetting.equipmentSerialNo) {
               await AuditLog.create({
                 userId: req.user.id,
-                macId: req.macAddress,
+                // macId: req.macAddress,
                 log: `Equipment Serial No. Changed`,
                 oldValue: oldParameterSetting.equipmentSerialNo,
                 newValue: equipmentSerialNo,
@@ -290,7 +290,7 @@ exports.updateParameterSettings = async (req, res, next) => {
         if (areaName !== undefined && areaName !== oldParameterSetting.areaName) {
           await AuditLog.create({
             userId: req.user.id,
-            macId: req.macAddress,
+            // macId: req.macAddress,
             log: `Area Name Changed`,
             oldValue: oldParameterSetting.areaName,
             newValue: areaName,
@@ -301,7 +301,7 @@ exports.updateParameterSettings = async (req, res, next) => {
         if (batchName !== undefined && batchName !== oldParameterSetting.batchName) {
           await AuditLog.create({
             userId: req.user.id,
-            macId: req.macAddress,
+            // macId: req.macAddress,
             log: `Batch Name Changed`,
             oldValue: oldParameterSetting.batchName,
             newValue: batchName,
@@ -312,7 +312,7 @@ exports.updateParameterSettings = async (req, res, next) => {
         if (batchNo !== undefined && batchNo !== oldParameterSetting.batchNo) {
           await AuditLog.create({
             userId: req.user.id,
-            macId: req.macAddress,
+            // macId: req.macAddress,
             log: `Batch No. Changed`,
             oldValue: oldParameterSetting.batchNo,
             newValue: batchNo,
@@ -323,7 +323,7 @@ exports.updateParameterSettings = async (req, res, next) => {
         if (leakTestStatus !== undefined && leakTestStatus !== oldParameterSetting.leakTestStatus) {
           await AuditLog.create({
             userId: req.user.id,
-            macId: req.macAddress,
+            // macId: req.macAddress,
             log: `Leak Test Changed`,
             oldValue: oldParameterSetting.leakTestStatus,
             newValue: leakTestStatus,
@@ -334,7 +334,7 @@ exports.updateParameterSettings = async (req, res, next) => {
       }
 
       res.status(200).json({
-        macId: parameterSetting.macId,
+        // macId: parameterSetting.macId,
         defaultParameter: {
           companyName: parameterSetting.companyName,
           departmentName: parameterSetting.departmentName,

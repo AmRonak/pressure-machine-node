@@ -7,7 +7,7 @@ const { Op } = require('sequelize');
 
 exports.createTestResult = async (req, res, next) => {
   try {
-    const macId = req.macAddress;
+    // const macId = req.macAddress;
     const {
       gloveNumber,
       setPressure,
@@ -26,7 +26,7 @@ exports.createTestResult = async (req, res, next) => {
 
     if (!user) return res.status(400).json({ message: 'Invalid user!' });
 
-    const parameterSetting = await ParameterSetting.findOne({ where: { macId } });
+    const [ parameterSetting ] = await ParameterSetting.findAll();
 
     if (!parameterSetting) return next(new AppError('Batch Number not found', 404));
 
@@ -45,7 +45,7 @@ exports.createTestResult = async (req, res, next) => {
       batchNumber: parameterSetting.batchNo,
       userName: user.username,
       testStatus,
-      macId: macId
+      // macId: macId
     });
 
     res.status(201).json(newTestResult);
@@ -56,15 +56,15 @@ exports.createTestResult = async (req, res, next) => {
 
 exports.getUniqueBatchNumbers = async (req, res, next) => {
   try {
-    const macId = req.macAddress;
+    // const macId = req.macAddress;
     
-    if (!macId) {
-      return res.status(400).json({ message: 'macId is required' });
-    }
+    // if (!macId) {
+    //   return res.status(400).json({ message: 'macId is required' });
+    // }
 
     const uniqueBatchNumbers = await TestResult.findAll({
       attributes: [[Sequelize.fn('DISTINCT', Sequelize.col('batchNumber')), 'batchNumber']],
-      where: { macId },
+      // where: { macId },
     });
 
     const batchNumbers = uniqueBatchNumbers.map(result => result.batchNumber);

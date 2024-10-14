@@ -3,7 +3,7 @@ const User = require('../models/user');
 const AuditLog = require('../models/auditLog');
 const AppError = require('../utils/AppError');
 const { Op } = require('sequelize');
-const getmac = require('getmac');
+// const getmac = require('getmac');
 const Permission = require('../models/permission');
 const { daysUntilExpiration, isPasswordExpired } = require('../utils/helper');
 
@@ -46,7 +46,7 @@ exports.registerUser = async (req, res, next) => {
     if (req.user.userLevel !== 'SuperAdmin') {
       await AuditLog.create({
         userId: req.user.id,
-        macId: req.macAddress,
+        // macId: req.macAddress,
         log: `User Created `,
         oldValue: null,
         newValue: null,
@@ -64,7 +64,7 @@ exports.registerUser = async (req, res, next) => {
 
 exports.loginUser = async (req, res) => {
   const { username, password, pin } = req.body;
-  const macAddress = getmac.default();
+  // const macAddress = getmac.default();
 
   const user = await User.findOne({ where: { username } });
 
@@ -108,7 +108,7 @@ exports.loginUser = async (req, res) => {
       if (user.userLevel !== 'SuperAdmin') {
         await AuditLog.create({
           userId: user.id,
-          macId: macAddress,
+          // macId: macAddress,
           log: `User is blocked due to max login attempts`,
           oldValue: null,
           newValue: null,
@@ -122,7 +122,7 @@ exports.loginUser = async (req, res) => {
     if (user.userLevel !== 'SuperAdmin') {
       await AuditLog.create({
         userId: user.id,
-        macId: macAddress,
+        // macId: macAddress,
         log: `Incorrect password. Login attempts left: ${user.attempts - user.failedAttempts}`,
         oldValue: null,
         newValue: null,
@@ -138,7 +138,7 @@ exports.loginUser = async (req, res) => {
   if (user.userLevel !== 'SuperAdmin') {
     await AuditLog.create({
       userId: user.id,
-      macId: macAddress,
+      // macId: macAddress,
       log: `User Logged In`,
       oldValue: null,
       newValue: null,
@@ -252,7 +252,7 @@ exports.blockUser = async (req, res, next) => {
       if (req.user.userLevel !== 'SuperAdmin') {
         await AuditLog.create({
           userId: req.user.id,
-          macId: req.macAddress,
+          // macId: req.macAddress,
           log: `User ${action === 'block' ? "Blocked" : "Unblocked"}`,
           oldValue: null,
           newValue: null,
@@ -331,7 +331,7 @@ exports.updateUser = async (req, res, next) => {
       if (username !== undefined && username !== oldUserData.username) {
         await AuditLog.create({
           userId: req.user.id,
-          macId: req.macAddress,
+          // macId: req.macAddress,
           log: `Username Changed`,
           oldValue: oldUserData.username,
           newValue: username,
@@ -344,7 +344,7 @@ exports.updateUser = async (req, res, next) => {
       if (password !== undefined && password !== oldUserData.password) {
         await AuditLog.create({
           userId: req.user.id,
-          macId: req.macAddress,
+          // macId: req.macAddress,
           log: `Password Changed`,
           oldValue: null,
           newValue: null,
@@ -357,7 +357,7 @@ exports.updateUser = async (req, res, next) => {
       if (userLevel !== undefined && userLevel !== oldUserData.userLevel) {
         await AuditLog.create({
         userId: req.user.id,
-        macId: req.macAddress,
+        // macId: req.macAddress,
         log: `User Level Changed`,
         oldValue: oldUserData.userLevel,
         newValue: userLevel,
@@ -370,7 +370,7 @@ exports.updateUser = async (req, res, next) => {
     if (attempts !== undefined && parseInt(attempts) !== oldUserData.attempts) {
       await AuditLog.create({
         userId: req.user.id,
-        macId: req.macAddress,
+        // macId: req.macAddress,
         log: `Attempts Changed`,
         oldValue: oldUserData.attempts,
         newValue: attempts,
@@ -383,7 +383,7 @@ exports.updateUser = async (req, res, next) => {
     if (autoLogoutTime !== undefined && parseInt(autoLogoutTime) !== oldUserData.autoLogoutTime) {
       await AuditLog.create({
         userId: req.user.id,
-        macId: req.macAddress,
+        // macId: req.macAddress,
         log: `Auto Logout Time Changed`,
         oldValue: oldUserData.autoLogoutTime,
         newValue: autoLogoutTime,
@@ -396,7 +396,7 @@ exports.updateUser = async (req, res, next) => {
     if (passwordExpiry !== undefined && parseInt(passwordExpiry) !== oldUserData.passwordExpiry) {
       await AuditLog.create({
         userId: req.user.id,
-        macId: req.macAddress,
+        // macId: req.macAddress,
         log: `Password Expiry Changed`,
         oldValue: oldUserData.passwordExpiry,
         newValue: passwordExpiry,
@@ -409,7 +409,7 @@ exports.updateUser = async (req, res, next) => {
     if (expiryDaysNotification !== undefined && parseInt(expiryDaysNotification) !== oldUserData.expiryDaysNotification) {
       await AuditLog.create({
         userId: req.user.id,
-        macId: req.macAddress,
+        // macId: req.macAddress,
         log: `Expiry Days Notification Changed`,
         oldValue: oldUserData.expiryDaysNotification,
         newValue: expiryDaysNotification,
@@ -422,7 +422,7 @@ exports.updateUser = async (req, res, next) => {
     if (autoUnblockTime !== undefined && parseInt(autoUnblockTime) !== oldUserData.autoUnblockTime) {
       await AuditLog.create({
         userId: req.user.id,
-        macId: req.macAddress,
+        // macId: req.macAddress,
         log: `Auto Unblock Time Changed`,
         oldValue: oldUserData.autoUnblockTime,
         newValue: autoUnblockTime,
@@ -435,7 +435,7 @@ exports.updateUser = async (req, res, next) => {
     if (pin !== undefined && pin !== oldUserData.pin) {
       await AuditLog.create({
         userId: req.user.id,
-        macId: req.macAddress,
+        // macId: req.macAddress,
         log: `Pin Changed`,
         oldValue: null,
         newValue: null,
@@ -474,7 +474,7 @@ exports.changePassword = async (req, res, next) => {
     if (req.user.userLevel !== 'SuperAdmin') {
       await AuditLog.create({
         userId: req.user.id,
-        macId: req.macAddress,
+        // macId: req.macAddress,
         log: `Password Changed`,
         oldValue: null,
         newValue: null,

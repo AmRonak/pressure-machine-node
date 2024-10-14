@@ -2,13 +2,13 @@ const MasterParameter = require('../models/masterParameter');
 const AppError = require('../utils/AppError');
 
 exports.getMasterParameter = async (req, res, next) => {
-  const macId = req.macAddress;
+  // const macId = req.macAddress;
 
   try {
-    let masterParameter = await MasterParameter.findOne({ where: { macId } });
+    let [ masterParameter ] = await MasterParameter.findAll();    
 
     if (!masterParameter) {
-      masterParameter = await MasterParameter.create({ macId });
+      masterParameter = await MasterParameter.create();
     }
 
     res.status(200).json(masterParameter);
@@ -18,13 +18,13 @@ exports.getMasterParameter = async (req, res, next) => {
 };
 
 exports.updateMasterParameter = async (req, res, next) => {
-  const macId = req.macAddress;
+  // const macId = req.macAddress;
   const { gasketPressure, gasketPressureAlarmTime, glovePressureAlarmTime, pressurePursuingPressure, pressurePursuingTime, glovePressure, valveOnTime, valveOffTime,
     motor1, motor2, motor3, valve1, valve2
    } = req.body;
 
   try {
-    const masterParameter = await MasterParameter.findOne({ where: { macId } });
+    const [ masterParameter ] = await MasterParameter.findAll();
 
     if (!masterParameter) return next(new AppError('Master parameter not found', 404));
 

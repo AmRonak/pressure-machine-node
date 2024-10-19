@@ -6,6 +6,7 @@ const masterParameter = require('./masterParameter');
 const auditLog = require('./auditLog');
 const testResult = require('./testResult');
 const permissions = require('./permissions');
+const device = require('./device');
 const { checkTokenExpiration } = require('../middleware/auth');
 
 const router = express.Router();
@@ -17,6 +18,7 @@ router.use('/masterParameter', masterParameter);
 router.use('/auditLog', auditLog);
 router.use('/testResult', testResult);
 router.use('/permissions', permissions);
+router.use('/devices', device);
 
 router.post('/refresh-token', checkTokenExpiration, (req, res, next) => {
   if (req.isTokenExpiring) {

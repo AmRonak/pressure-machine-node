@@ -38,17 +38,19 @@ wss.on('connection', (ws, req) => {
 
         if (data.type === 'register') {
             // Register the device with a unique ID
-            clients[data.deviceId] = ws;
-            console.log(`Device registered: ${data.deviceId}`);
-            reactClients.forEach((client) => {
-                if (client.readyState === WebSocket.OPEN) {
-                    client.send(JSON.stringify({
-                        type: 'new-device-online',
-                        deviceId: data.deviceId,
-                        response: "Device Online"
-                    }));
-                }
-            });
+            if (data.deviceId) {
+                clients[data.deviceId] = ws;
+                console.log(`Device registered: ${data.deviceId}`);
+                reactClients.forEach((client) => {
+                    if (client.readyState === WebSocket.OPEN) {
+                        client.send(JSON.stringify({
+                            type: 'new-device-online',
+                            deviceId: data.deviceId,
+                            response: "Device Online"
+                        }));
+                    }
+                });
+            }
         } else if (data.type === 'react-register') {
             // Add the React client to the list
             // console.log("clients ", Object.keys(clients))
@@ -113,10 +115,10 @@ wss.on('connection', (ws, req) => {
 
     ws.on('close', () => {
         console.log('WebSocket connection closed');
-        
+
         // Remove WebSocket connections from React clients or devices
         console.log("ws", ws);
-        
+
         Object.keys(clients).forEach((key) => {
             if (clients[key] === ws) {
                 reactClients.forEach((client) => {

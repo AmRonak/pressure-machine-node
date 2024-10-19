@@ -53,7 +53,7 @@ wss.on('connection', (ws, req) => {
             // Add the React client to the list
             reactClients.push(ws);
             console.log('React app connected');
-        } else if (data.type === 'response') {
+        } else if (data.type === 'login-success') {
             // Handle response from device
             const { deviceId, response } = data;
             console.log(`Response from device ${deviceId}: ${response}`);
@@ -62,7 +62,37 @@ wss.on('connection', (ws, req) => {
             reactClients.forEach((client) => {
                 if (client.readyState === WebSocket.OPEN) {
                     client.send(JSON.stringify({
-                        type: 'device-response',
+                        type: 'device-login-success',
+                        deviceId: deviceId,
+                        response: response
+                    }));
+                }
+            });
+        } else if (data.type === 'test-start') {
+            // Handle response from device
+            const { deviceId, response } = data;
+            console.log(`Response from device ${deviceId}: ${response}`);
+
+            // Send response to all React clients
+            reactClients.forEach((client) => {
+                if (client.readyState === WebSocket.OPEN) {
+                    client.send(JSON.stringify({
+                        type: 'device-test-start',
+                        deviceId: deviceId,
+                        response: response
+                    }));
+                }
+            });
+        } else if (data.type === 'test-stop') {
+            // Handle response from device
+            const { deviceId, response } = data;
+            console.log(`Response from device ${deviceId}: ${response}`);
+
+            // Send response to all React clients
+            reactClients.forEach((client) => {
+                if (client.readyState === WebSocket.OPEN) {
+                    client.send(JSON.stringify({
+                        type: 'device-test-stop',
                         deviceId: deviceId,
                         response: response
                     }));

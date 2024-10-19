@@ -115,8 +115,21 @@ wss.on('connection', (ws, req) => {
         console.log('WebSocket connection closed');
         
         // Remove WebSocket connections from React clients or devices
+        console.log("ws", ws);
+        
         Object.keys(clients).forEach((key) => {
-            if (clients[key] === ws) delete clients[key];
+            if (clients[key] === ws) {
+                reactClients.forEach((client) => {
+                    if (client.readyState === WebSocket.OPEN) {
+                        client.send(JSON.stringify({
+                            type: 'device-offline',
+                            deviceId: clients[key],
+                            response: "Device Offline"
+                        }));
+                    }
+                });
+                delete clients[key];
+            }
         });
         reactClients = reactClients.filter(client => client !== ws);
     });

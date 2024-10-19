@@ -51,7 +51,17 @@ wss.on('connection', (ws, req) => {
             });
         } else if (data.type === 'react-register') {
             // Add the React client to the list
+            // console.log("clients ", Object.keys(clients))
             reactClients.push(ws);
+            reactClients.forEach((client) => {
+                if (client.readyState === WebSocket.OPEN) {
+                    client.send(JSON.stringify({
+                        type: 'online-device-list',
+                        devicesList: Object.keys(clients),
+                        response: "Online Device List"
+                    }));
+                }
+            });
             console.log('React app connected');
         } else if (data.type === 'login-success') {
             // Handle response from device

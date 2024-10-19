@@ -125,7 +125,7 @@ wss.on('connection', (ws, req) => {
                     if (client.readyState === WebSocket.OPEN) {
                         client.send(JSON.stringify({
                             type: 'device-offline',
-                            deviceId: clients[key],
+                            deviceId: key,
                             response: "Device Offline"
                         }));
                     }

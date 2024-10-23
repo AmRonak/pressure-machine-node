@@ -29,7 +29,6 @@ const wss = new WebSocket.Server({ server });
 let clients = {}; // Store connected devices
 let reactClients = []; // Store WebSocket connections for React clients
 
-// Handle WebSocket connections (for devices and React clients)
 wss.on('connection', (ws, req) => {
     console.log('New WebSocket connection');
 
@@ -37,113 +36,117 @@ wss.on('connection', (ws, req) => {
         const data = JSON.parse(message);
 
         if (data.type === 'register') {
-            // Register the device with a unique ID
             if (data.deviceId) {
-                clients[data.deviceId] = ws;
+                clients[data.deviceId] = {
+                    ws: ws,
+                    loggedIn: false,
+                    testStarted: false,
+                    testStopped: false 
+                };
                 console.log(`Device registered: ${data.deviceId}`);
-                reactClients.forEach((client) => {
-                    if (client.readyState === WebSocket.OPEN) {
-                        client.send(JSON.stringify({
-                            type: 'new-device-online',
-                            deviceId: data.deviceId,
-                            response: "Device Online"
-                        }));
-                    }
+
+                notifyReactClients({
+                    type: 'new-device-online',
+                    deviceInfo: getDeviceInfo(data.deviceId)
                 });
             }
         } else if (data.type === 'react-register') {
-            // Add the React client to the list
-            // console.log("clients ", Object.keys(clients))
             reactClients.push(ws);
-            reactClients.forEach((client) => {
-                if (client.readyState === WebSocket.OPEN) {
-                    client.send(JSON.stringify({
-                        type: 'online-device-list',
-                        devicesList: Object.keys(clients),
-                        response: "Online Device List"
-                    }));
-                }
-            });
             console.log('React app connected');
+
+            if (ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({
+                    type: 'online-device-list',
+                    devices: getAllDeviceInfo()
+                }));
+            }
         } else if (data.type === 'login-success') {
-            // Handle response from device
-            const { deviceId, response } = data;
-            console.log(`Response from device ${deviceId}: ${response}`);
-
-            // Send response to all React clients
-            reactClients.forEach((client) => {
-                if (client.readyState === WebSocket.OPEN) {
-                    client.send(JSON.stringify({
-                        type: 'device-login-success',
-                        deviceId: deviceId,
-                        response: response
-                    }));
-                }
-            });
+            const { deviceId } = data;
+            if (clients[deviceId]) {
+                clients[deviceId].loggedIn = true;
+                console.log(`Device ${deviceId} logged in`);
+                notifyReactClients({
+                    type: 'device-login-success',
+                    deviceInfo: getDeviceInfo(deviceId)
+                });
+            }
         } else if (data.type === 'test-start') {
-            // Handle response from device
-            const { deviceId, response } = data;
-            console.log(`Response from device ${deviceId}: ${response}`);
-
-            // Send response to all React clients
-            reactClients.forEach((client) => {
-                if (client.readyState === WebSocket.OPEN) {
-                    client.send(JSON.stringify({
-                        type: 'device-test-start',
-                        deviceId: deviceId,
-                        response: response
-                    }));
-                }
-            });
+            const { deviceId } = data;
+            if (clients[deviceId]) {
+                clients[deviceId].testStarted = true;  
+                clients[deviceId].testStopped = false; 
+                console.log(`Test started for device ${deviceId}`);
+                notifyReactClients({
+                    type: 'device-test-start',
+                    deviceInfo: getDeviceInfo(deviceId)
+                });
+            }
         } else if (data.type === 'test-stop') {
-            // Handle response from device
-            const { deviceId, response } = data;
-            console.log(`Response from device ${deviceId}: ${response}`);
-
-            // Send response to all React clients
-            reactClients.forEach((client) => {
-                if (client.readyState === WebSocket.OPEN) {
-                    client.send(JSON.stringify({
-                        type: 'device-test-stop',
-                        deviceId: deviceId,
-                        response: response
-                    }));
-                }
-            });
+            const { deviceId } = data;
+            if (clients[deviceId]) {
+                clients[deviceId].testStopped = true;
+                clients[deviceId].testStarted = false; 
+                console.log(`Test stopped for device ${deviceId}`);
+                notifyReactClients({
+                    type: 'device-test-stop',
+                    deviceInfo: getDeviceInfo(deviceId)
+                });
+            }
         }
     });
 
     ws.on('close', () => {
         console.log('WebSocket connection closed');
 
-        // Remove WebSocket connections from React clients or devices
-        console.log("ws", ws);
-
+        // Remove from clients if it's a device
         Object.keys(clients).forEach((key) => {
-            if (clients[key] === ws) {
-                reactClients.forEach((client) => {
-                    if (client.readyState === WebSocket.OPEN) {
-                        client.send(JSON.stringify({
-                            type: 'device-offline',
-                            deviceId: key,
-                            response: "Device Offline"
-                        }));
-                    }
+            if (clients[key].ws === ws) {
+                console.log(`Device disconnected: ${key}`);
+                notifyReactClients({
+                    type: 'device-offline',
+                    deviceId: key,
+                    response: "Device Offline"
                 });
                 delete clients[key];
             }
         });
+
+        // Remove from reactClients if it's a React connection
         reactClients = reactClients.filter(client => client !== ws);
     });
 });
 
-// Handle WebSocket request from React app
+function notifyReactClients(message) {
+    reactClients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify(message));
+        }
+    });
+}
+
+function getDeviceInfo(deviceId) {
+    const device = clients[deviceId];
+    if (device) {
+        return {
+            deviceId: deviceId,
+            loggedIn: device.loggedIn,
+            testStarted: device.testStarted,
+            testStopped: device.testStopped
+        };
+    }
+    return null;
+}
+
+function getAllDeviceInfo() {
+    return Object.keys(clients).map(deviceId => getDeviceInfo(deviceId));
+}
+
 app.post('/send-data', (req, res) => {
     const { deviceId, data } = req.body;
 
     // Send data to a specific device
-    if (clients[deviceId]) {
-        clients[deviceId].send(JSON.stringify({ type: 'data', payload: data }));
+    if (clients[deviceId] && clients[deviceId].ws) {
+        clients[deviceId].ws.send(JSON.stringify({ type: 'data', payload: data }));
         res.json({ status: 'Data sent' });
     } else {
         res.status(404).json({ error: 'Device not found' });

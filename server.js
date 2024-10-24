@@ -82,7 +82,7 @@ wss.on('connection', (ws, req) => {
                 clients[deviceId].loggedIn = false;
                 console.log(`Device ${deviceId} logged in`);
                 notifyReactClients({
-                    type: 'device-login-success',
+                    type: 'device-logout-success',
                     deviceInfo: getDeviceInfo(deviceId)
                 });
             }

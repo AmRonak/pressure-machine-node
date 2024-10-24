@@ -56,7 +56,8 @@ wss.on('connection', (ws, req) => {
                 });
             }
         } else if (data.type === 'react-register') {
-            reactClients.push(ws);
+            
+            reactClients.push({...ws, isSuperUser: data.isSuperUser});
             console.log('React app connected');
 
             if (ws.readyState === WebSocket.OPEN) {
@@ -150,11 +151,12 @@ function getAllDeviceInfo() {
 }
 
 app.post('/send-data', (req, res) => {
-    const { deviceId, data } = req.body;
+console.log("reactClients ", reactClients);
+    const { deviceId, data, isSuperUser } = req.body;
 
     // Send data to a specific device
     if (clients[deviceId] && clients[deviceId].ws) {
-        clients[deviceId].ws.send(JSON.stringify({ type: 'data', payload: data }));
+        clients[deviceId].ws.send(JSON.stringify({ type: 'data', payload: data, isSuperUser  }));
         res.json({ status: 'Data sent' });
     } else {
         res.status(404).json({ error: 'Device not found' });

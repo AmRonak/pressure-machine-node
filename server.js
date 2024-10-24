@@ -129,6 +129,7 @@ function getDeviceInfo(deviceId) {
     if (device) {
         return {
             deviceId: deviceId,
+            isOnline: true,
             loggedIn: device.loggedIn,
             testStarted: device.testStarted,
             testStopped: device.testStopped

@@ -76,6 +76,16 @@ wss.on('connection', (ws, req) => {
                     deviceInfo: getDeviceInfo(deviceId)
                 });
             }
+        } else if (data.type === 'logout-success') {
+            const { deviceId } = data;
+            if (clients[deviceId]) {
+                clients[deviceId].loggedIn = false;
+                console.log(`Device ${deviceId} logged in`);
+                notifyReactClients({
+                    type: 'device-login-success',
+                    deviceInfo: getDeviceInfo(deviceId)
+                });
+            }
         } else if (data.type === 'test-start') {
             const { deviceId } = data;
             if (clients[deviceId]) {

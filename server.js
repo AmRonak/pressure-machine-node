@@ -11,6 +11,11 @@ const { createAdmin } = require('./controllers/userController');
 const WebSocket = require('ws');
 const http = require('http');
 
+const OFFLINE = "OFFLINE";
+const LOGGED_IN = "LOGGED_IN";
+const ONLINE = "ONLINE";
+const TEST_STARTED = "TEST_STARTED";
+
 dotenv.config();
 
 const app = express();
@@ -127,8 +132,10 @@ function notifyReactClients(message) {
 function getDeviceInfo(deviceId) {
     const device = clients[deviceId];
     if (device) {
+        let status = device.testStarted ? TEST_STARTED : device.loggedIn ? LOGGED_IN : ONLINE
         return {
             deviceId: deviceId,
+            status,
             isOnline: true,
             loggedIn: device.loggedIn,
             testStarted: device.testStarted,

@@ -67,10 +67,10 @@ wss.on('connection', (ws, req) => {
                 }));
             }
         } else if (data.type === 'login-success') {
+            console.log(`Device ${deviceId} logged in`);            
             const { deviceId } = data;
             if (clients[deviceId]) {
                 clients[deviceId].loggedIn = true;
-                console.log(`Device ${deviceId} logged in`);
                 notifyReactClients({
                     type: 'device-login-success',
                     deviceInfo: getDeviceInfo(deviceId)
@@ -135,6 +135,8 @@ wss.on('connection', (ws, req) => {
 function notifyReactClients(message) {
     reactClients.forEach((client) => {
         if (client.readyState === WebSocket.OPEN) {
+            console.log("client", client);
+            
             client.send(JSON.stringify(message));
         }
     });

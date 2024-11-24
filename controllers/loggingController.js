@@ -4,8 +4,8 @@ const Logging = require('../models/logging');
 // Create a new log entry
 exports.createLog = async (req, res) => {
   try {
-    const { userId, data, starttesttime, endtesttime } = req.body;
-    const log = await Logging.create({ userId, data, starttesttime, endtesttime });
+    const { userid, deviceid, batchid, data, starttesttime, endtesttime } = req.body;
+    const log = await Logging.create({ userid, deviceid, batchid, data, starttesttime, endtesttime });
     res.status(201).json(log);
   } catch (error) {
     console.log("errror", error);
@@ -16,10 +16,10 @@ exports.createLog = async (req, res) => {
 
 // Retrieve logs with optional filtering
 exports.getLogs = async (req, res) => {
-  const { userId, starttesttime, endtesttime } = req.query;
+  const { batchid, starttesttime, endtesttime } = req.query;
   const whereClause = {};
 
-  if (userId) whereClause.userId = userId;
+  if (batchid) whereClause.batchid = batchid;
   if (starttesttime) whereClause.starttesttime = { [Op.gte]: new Date(starttesttime) };
   if (endtesttime) whereClause.endtesttime = { [Op.lte]: new Date(endtesttime) };
 

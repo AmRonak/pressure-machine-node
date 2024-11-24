@@ -1,18 +1,21 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../sequelize');
-const User = require('./user');
 
 const Logging = sequelize.define('Logging', {
-  userId: {
-    type: DataTypes.INTEGER,
+  userid: {
+    type: DataTypes.STRING,
     allowNull: false,
-    references: {
-      model: 'Users',
-      key: 'id'
-    }
+  },
+  batchid: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  deviceid: {
+    type: DataTypes.STRING,
+    allowNull: false,
   },
   data: {
-    type: DataTypes.STRING,
+    type: DataTypes.JSON,
     allowNull: true,
   },
   starttesttime: {
@@ -25,18 +28,12 @@ const Logging = sequelize.define('Logging', {
   },
   createdAt: {
     type: DataTypes.DATE,
-    allowNull: false,
     defaultValue: DataTypes.NOW,
   },
   updatedAt: {
     type: DataTypes.DATE,
-    allowNull: false,
     defaultValue: DataTypes.NOW,
   },
 });
-
-// Define associations with the User model
-User.hasMany(Logging, { foreignKey: 'userId', as: 'UserLoggings' });
-Logging.belongsTo(User, { foreignKey: 'userId', as: 'User' });
 
 module.exports = Logging;

@@ -56,8 +56,7 @@ wss.on('connection', (ws, req) => {
                 });
             }
         } else if (data.type === 'react-register') {
-            
-            reactClients.push({...ws, isSuperUser: data.isSuperUser});
+            reactClients.push(ws);
             console.log('React app connected');
 
             if (ws.readyState === WebSocket.OPEN) {
@@ -67,10 +66,10 @@ wss.on('connection', (ws, req) => {
                 }));
             }
         } else if (data.type === 'login-success') {
-            console.log(`Device ${deviceId} logged in`);            
             const { deviceId } = data;
             if (clients[deviceId]) {
                 clients[deviceId].loggedIn = true;
+                console.log(`Device ${deviceId} logged in`);
                 notifyReactClients({
                     type: 'device-login-success',
                     deviceInfo: getDeviceInfo(deviceId)
@@ -80,6 +79,9 @@ wss.on('connection', (ws, req) => {
             const { deviceId } = data;
             if (clients[deviceId]) {
                 clients[deviceId].loggedIn = false;
+                clients[deviceId].status = LOGGED_IN;
+                clients[deviceId].testStarted = false;  
+                clients[deviceId].testStopped = false; 
                 console.log(`Device ${deviceId} logged in`);
                 notifyReactClients({
                     type: 'device-logout-success',
@@ -135,8 +137,6 @@ wss.on('connection', (ws, req) => {
 function notifyReactClients(message) {
     reactClients.forEach((client) => {
         if (client.readyState === WebSocket.OPEN) {
-            console.log("client", client);
-            
             client.send(JSON.stringify(message));
         }
     });
@@ -163,7 +163,7 @@ function getAllDeviceInfo() {
 }
 
 app.post('/send-data', (req, res) => {
-console.log("reactClients ", reactClients);
+// console.log("reactClients ", reactClients);
     const { deviceId, data, isSuperUser } = req.body;
 
     // Send data to a specific device

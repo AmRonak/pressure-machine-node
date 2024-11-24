@@ -5,7 +5,6 @@ const User = require('../models/user');
 const Device = require('../models/device');
 
 exports.getAllDevices = async (req, res, next) => {
-
   try {
     const devices = await Device.findAll();
 

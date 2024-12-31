@@ -186,7 +186,7 @@ exports.currentProfile = async (req, res) => {
 
     res.status(200).json({
       message: 'This is a secured profile route',
-      user: {...req.user, permissions: accessibleModules.map(module => module.id), tokenExpirationInfo, passwordExpired, autoLogoutTime: currentUser.autoLogoutTime},
+      user: {...req.user, pin: currentUser.pin, permissions: accessibleModules.map(module => module.id), tokenExpirationInfo, passwordExpired, autoLogoutTime: currentUser.autoLogoutTime},
     });
   } catch (err) {
     res.status(500).json({ error: err.message });

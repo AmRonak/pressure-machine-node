@@ -9,6 +9,7 @@ const permissions = require('./permissions');
 const device = require('./device');
 const logging = require('./logging');
 const { checkTokenExpiration } = require('../middleware/auth');
+const jwt = require('jsonwebtoken');
 
 const router = express.Router();
 

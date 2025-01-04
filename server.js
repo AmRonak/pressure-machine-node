@@ -36,6 +36,11 @@ let reactClients = []; // Store WebSocket connections for React clients
 
 wss.on('connection', (ws, req) => {
     console.log('New WebSocket connection');
+    ws.isAlive = true; // Mark as alive on connection
+
+    ws.on('pong', () => {
+        ws.isAlive = true; // Mark as alive on pong
+    });
 
     ws.on('message', (message) => {
         const data = JSON.parse(message);
@@ -46,7 +51,7 @@ wss.on('connection', (ws, req) => {
                     ws: ws,
                     loggedIn: false,
                     testStarted: false,
-                    testStopped: false 
+                    testStopped: false
                 };
                 console.log(`Device registered: ${data.deviceId}`);
 
@@ -79,10 +84,9 @@ wss.on('connection', (ws, req) => {
             const { deviceId } = data;
             if (clients[deviceId]) {
                 clients[deviceId].loggedIn = false;
-                clients[deviceId].status = LOGGED_IN;
-                clients[deviceId].testStarted = false;  
-                clients[deviceId].testStopped = false; 
-                console.log(`Device ${deviceId} logged in`);
+                clients[deviceId].testStarted = false;
+                clients[deviceId].testStopped = false;
+                console.log(`Device ${deviceId} logged out`);
                 notifyReactClients({
                     type: 'device-logout-success',
                     deviceInfo: getDeviceInfo(deviceId)
@@ -91,8 +95,8 @@ wss.on('connection', (ws, req) => {
         } else if (data.type === 'test-start') {
             const { deviceId } = data;
             if (clients[deviceId]) {
-                clients[deviceId].testStarted = true;  
-                clients[deviceId].testStopped = false; 
+                clients[deviceId].testStarted = true;
+                clients[deviceId].testStopped = false;
                 console.log(`Test started for device ${deviceId}`);
                 notifyReactClients({
                     type: 'device-test-start',
@@ -103,7 +107,7 @@ wss.on('connection', (ws, req) => {
             const { deviceId } = data;
             if (clients[deviceId]) {
                 clients[deviceId].testStopped = true;
-                clients[deviceId].testStarted = false; 
+                clients[deviceId].testStarted = false;
                 console.log(`Test stopped for device ${deviceId}`);
                 notifyReactClients({
                     type: 'device-test-stop',
@@ -134,6 +138,23 @@ wss.on('connection', (ws, req) => {
     });
 });
 
+// Periodic heartbeat to check client connections
+const interval = setInterval(() => {
+    wss.clients.forEach((ws) => {
+        if (!ws.isAlive) {
+            console.log('Terminating stale connection');
+            ws.terminate();
+        } else {
+            ws.isAlive = false;
+            ws.ping(); // Send a ping to check if the client responds with pong
+        }
+    });
+}, 20000); // 30 seconds interval
+
+wss.on('close', () => {
+    clearInterval(interval); // Cleanup interval on server close
+});
+
 function notifyReactClients(message) {
     reactClients.forEach((client) => {
         if (client.readyState === WebSocket.OPEN) {
@@ -145,7 +166,8 @@ function notifyReactClients(message) {
 function getDeviceInfo(deviceId) {
     const device = clients[deviceId];
     if (device) {
-        let status = device.testStarted ? TEST_STARTED : device.loggedIn ? LOGGED_IN : ONLINE
+        let status = device.testStarted ? 'TEST_STARTED' :
+            device.loggedIn ? 'LOGGED_IN' : 'ONLINE';
         return {
             deviceId: deviceId,
             status,

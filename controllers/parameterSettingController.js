@@ -87,7 +87,9 @@ exports.updateParameterSettings = async (req, res, next) => {
               oldValue: "-",
               newValue: companyName,
               category: 'general',
-              comment: defaultComment ? defaultComment : ""
+              comment: defaultComment ? defaultComment : "",
+              userName: req?.user?.username,
+              userLevel: req?.user?.userLevel
             });
           }
           if (departmentName !== undefined) {
@@ -98,7 +100,9 @@ exports.updateParameterSettings = async (req, res, next) => {
               oldValue: "-",
               newValue: departmentName,
               category: 'general',
-              comment: defaultComment ? defaultComment : ""
+              comment: defaultComment ? defaultComment : "",
+              userName: req?.user?.username,
+              userLevel: req?.user?.userLevel
             });
           }
           if (equipmentName !== undefined) {
@@ -109,7 +113,9 @@ exports.updateParameterSettings = async (req, res, next) => {
               oldValue: "-",
               newValue: equipmentName,
               category: 'general',
-              comment: defaultComment ? defaultComment : ""
+              comment: defaultComment ? defaultComment : "",
+              userName: req?.user?.username,
+              userLevel: req?.user?.userLevel
             });
           }
           if (equipmentSerialNo !== undefined) {
@@ -120,7 +126,9 @@ exports.updateParameterSettings = async (req, res, next) => {
               oldValue: "-",
               newValue: equipmentSerialNo,
               category: 'general',
-              comment: defaultComment ? defaultComment : ""
+              comment: defaultComment ? defaultComment : "",
+              userName: req?.user?.username,
+              userLevel: req?.user?.userLevel
             });
           }
         }
@@ -134,7 +142,9 @@ exports.updateParameterSettings = async (req, res, next) => {
             oldValue: "-",
             newValue: areaName,
             category: 'general',
-            comment: printComment ? printComment : ""
+            comment: printComment ? printComment : "",
+            userName: req?.user?.username,
+            userLevel: req?.user?.userLevel
           });
         }
         if (batchName !== undefined) {
@@ -145,7 +155,9 @@ exports.updateParameterSettings = async (req, res, next) => {
             oldValue: "-",
             newValue: batchName,
             category: 'general',
-            comment: printComment ? printComment : ""
+            comment: printComment ? printComment : "",
+            userName: req?.user?.username,
+            userLevel: req?.user?.userLevel
           });
         }
         if (batchNo !== undefined) {
@@ -156,7 +168,9 @@ exports.updateParameterSettings = async (req, res, next) => {
             oldValue: "-",
             newValue: batchNo,
             category: 'general',
-            comment: printComment ? printComment : ""
+            comment: printComment ? printComment : "",
+            userName: req?.user?.username,
+            userLevel: req?.user?.userLevel
           });
         }
         if (leakTestStatus !== undefined) {
@@ -167,7 +181,9 @@ exports.updateParameterSettings = async (req, res, next) => {
             oldValue: "-",
             newValue: leakTestStatus,
             category: 'general',
-            comment: printComment ? printComment : ""
+            comment: printComment ? printComment : "",
+            userName: req?.user?.username,
+            userLevel: req?.user?.userLevel
           });
         }
 
@@ -249,7 +265,9 @@ exports.updateParameterSettings = async (req, res, next) => {
                 oldValue: oldParameterSetting.companyName,
                 newValue: companyName,
                 category: 'general',
-                comment: defaultComment ? defaultComment : ""
+                comment: defaultComment ? defaultComment : "",
+                userName: req?.user?.username,
+                userLevel: req?.user?.userLevel
               });
             }
             if (departmentName !== undefined && departmentName !== oldParameterSetting.departmentName) {
@@ -260,7 +278,9 @@ exports.updateParameterSettings = async (req, res, next) => {
                 oldValue: oldParameterSetting.departmentName,
                 newValue: departmentName,
                 category: 'general',
-                comment: defaultComment ? defaultComment : ""
+                comment: defaultComment ? defaultComment : "",
+                userName: req?.user?.username,
+                userLevel: req?.user?.userLevel
               });
             }
             if (equipmentName !== undefined && equipmentName !== oldParameterSetting.equipmentName) {
@@ -271,7 +291,9 @@ exports.updateParameterSettings = async (req, res, next) => {
                 oldValue: oldParameterSetting.equipmentName,
                 newValue: equipmentName,
                 category: 'general',
-                comment: defaultComment ? defaultComment : ""
+                comment: defaultComment ? defaultComment : "",
+                userName: req?.user?.username,
+                userLevel: req?.user?.userLevel
               });
             }
             if (equipmentSerialNo !== undefined && equipmentSerialNo !== oldParameterSetting.equipmentSerialNo) {
@@ -282,7 +304,9 @@ exports.updateParameterSettings = async (req, res, next) => {
                 oldValue: oldParameterSetting.equipmentSerialNo,
                 newValue: equipmentSerialNo,
                 category: 'general',
-                comment: defaultComment ? defaultComment : ""
+                comment: defaultComment ? defaultComment : "",
+                userName: req?.user?.username,
+                userLevel: req?.user?.userLevel
               });
             }
           }
@@ -295,7 +319,9 @@ exports.updateParameterSettings = async (req, res, next) => {
             oldValue: oldParameterSetting.areaName,
             newValue: areaName,
             category: 'general',
-            comment: printComment ? printComment : ""
+            comment: printComment ? printComment : "",
+            userName: req?.user?.username,
+            userLevel: req?.user?.userLevel
           });
         }
         if (batchName !== undefined && batchName !== oldParameterSetting.batchName) {
@@ -306,7 +332,9 @@ exports.updateParameterSettings = async (req, res, next) => {
             oldValue: oldParameterSetting.batchName,
             newValue: batchName,
             category: 'general',
-            comment: printComment ? printComment : ""
+            comment: printComment ? printComment : "",
+            userName: req?.user?.username,
+            userLevel: req?.user?.userLevel
           });
         }
         if (batchNo !== undefined && batchNo !== oldParameterSetting.batchNo) {
@@ -317,7 +345,9 @@ exports.updateParameterSettings = async (req, res, next) => {
             oldValue: oldParameterSetting.batchNo,
             newValue: batchNo,
             category: 'general',
-            comment: printComment ? printComment : ""
+            comment: printComment ? printComment : "",
+            userName: req?.user?.username,
+            userLevel: req?.user?.userLevel
           });
         }
         if (leakTestStatus !== undefined && leakTestStatus !== oldParameterSetting.leakTestStatus) {
@@ -328,7 +358,9 @@ exports.updateParameterSettings = async (req, res, next) => {
             oldValue: oldParameterSetting.leakTestStatus,
             newValue: leakTestStatus,
             category: 'general',
-            comment: printComment ? printComment : ""
+            comment: printComment ? printComment : "",
+            userName: req?.user?.username,
+            userLevel: req?.user?.userLevel
           });
         }
       }

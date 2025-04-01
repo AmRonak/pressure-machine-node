@@ -216,7 +216,7 @@ app.all('*', (req, res, next) => {
 app.use(globalErrorHandler);
 
 sequelize.sync({
-    // alter: true
+    alter: true // this is for updating the database table
 }).then(() => {
     server.listen(PORT, () => {
         console.log(`Server is running on port ${PORT}`);

@@ -52,7 +52,9 @@ exports.updateRecipeSetting = async (req, res, next) => {
           oldValue: oldRecipeSetting.initialPressure,
           newValue: initialPressure,
           category: 'general',
-          comment: comment ? comment : ""
+          comment: comment ? comment : "",
+          userName: req?.user?.username,
+          userLevel: req?.user?.userLevel
         });
       }
       if (setPressure !== undefined && setPressure !== oldRecipeSetting.setPressure) {
@@ -63,7 +65,9 @@ exports.updateRecipeSetting = async (req, res, next) => {
           oldValue: oldRecipeSetting.setPressure,
           newValue: setPressure,
           category: 'general',
-          comment: comment ? comment : ""
+          comment: comment ? comment : "",
+          userName: req?.user?.username,
+          userLevel: req?.user?.userLevel
         });
       }
       if (leakTestPressure !== undefined && leakTestPressure !== oldRecipeSetting.leakTestPressure) {
@@ -74,7 +78,9 @@ exports.updateRecipeSetting = async (req, res, next) => {
           oldValue: oldRecipeSetting.leakTestPressure,
           newValue: leakTestPressure,
           category: 'general',
-          comment: comment ? comment : ""
+          comment: comment ? comment : "",
+          userName: req?.user?.username,
+          userLevel: req?.user?.userLevel
         });
       }
       if (lowerTestPressure !== undefined && lowerTestPressure !== oldRecipeSetting.lowerTestPressure) {
@@ -85,7 +91,9 @@ exports.updateRecipeSetting = async (req, res, next) => {
           oldValue: oldRecipeSetting.lowerTestPressure,
           newValue: lowerTestPressure,
           category: 'general',
-          comment: comment ? comment : ""
+          comment: comment ? comment : "",
+          userName: req?.user?.username,
+          userLevel: req?.user?.userLevel
         });
       }
       if (stabilizationTime !== undefined && stabilizationTime !== oldRecipeSetting.stabilizationTime) {      
@@ -96,7 +104,9 @@ exports.updateRecipeSetting = async (req, res, next) => {
           oldValue: oldRecipeSetting.stabilizationTime,
           newValue: stabilizationTime,
           category: 'general',
-          comment: comment ? comment : ""
+          comment: comment ? comment : "",
+          userName: req?.user?.username,
+          userLevel: req?.user?.userLevel
         });
       }
       if (testTime !== undefined && testTime !== oldRecipeSetting.testTime) {
@@ -107,7 +117,9 @@ exports.updateRecipeSetting = async (req, res, next) => {
           oldValue: oldRecipeSetting.testTime,
           newValue: testTime,
           category: 'general',
-          comment: comment ? comment : ""
+          comment: comment ? comment : "",
+          userName: req?.user?.username,
+          userLevel: req?.user?.userLevel
         });
       }
     }

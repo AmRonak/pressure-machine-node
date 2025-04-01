@@ -52,7 +52,9 @@ exports.registerUser = async (req, res, next) => {
         newValue: null,
         category: 'general',
         updatedUserId: newUser.id,
-        comment: comments ? comments : ""
+        comment: comments ? comments : "",
+        userName: req?.user?.username,
+        userLevel: req?.user?.userLevel
       });
     }
 
@@ -97,9 +99,9 @@ exports.loginUser = async (req, res) => {
   } else if (pin) {
     validPassword = pin === user.pin;
   }
-
   if (!validPassword) {
     user.failedAttempts += 1;
+    console.log({ userData: user })
 
     if (user.failedAttempts >= user.attempts) {
       user.active = false;
@@ -112,7 +114,9 @@ exports.loginUser = async (req, res) => {
           log: `User is blocked due to max login attempts`,
           oldValue: null,
           newValue: null,
-          category: 'general'
+          category: 'general',
+          userName: user.username,
+          userLevel: user.userLevel
         });
       }
       return res.status(403).json({ error: 'User is blocked due to max login attempts' });
@@ -126,7 +130,9 @@ exports.loginUser = async (req, res) => {
         log: `Incorrect password. Login attempts left: ${user.attempts - user.failedAttempts}`,
         oldValue: null,
         newValue: null,
-        category: 'general'
+        category: 'general',
+        userName: user.username,
+        userLevel: user.userLevel
       });
     }
     return res.status(400).json({ message: `Incorrect password. Login attempts left: ${user.attempts - user.failedAttempts}` });
@@ -142,7 +148,9 @@ exports.loginUser = async (req, res) => {
       log: `User Logged In`,
       oldValue: null,
       newValue: null,
-      category: 'general'
+      category: 'general',
+      userName: user.username,
+      userLevel: user.userLevel
     });
   }
   const token = jwt.sign({ id: user.id, userLevel: user.userLevel, username: user.username }, process.env.JWT_SECRET, { expiresIn: `90d` });
@@ -257,7 +265,9 @@ exports.blockUser = async (req, res, next) => {
           oldValue: null,
           newValue: null,
           category: 'general',
-          updatedUserId: user.id
+          updatedUserId: user.id,
+          userName: req?.user?.username,
+          userLevel: req?.user?.userLevel
         });
       }
       return user.save();
@@ -337,7 +347,9 @@ exports.updateUser = async (req, res, next) => {
           newValue: username,
           category: 'general',
           updatedUserId: oldUserData.id,
-          comment: comments ? comments : ""
+          comment: comments ? comments : "",
+          userName: req?.user?.username,
+          userLevel: req?.user?.userLevel
         });
       }
       
@@ -350,7 +362,9 @@ exports.updateUser = async (req, res, next) => {
           newValue: null,
           category: 'general',
           updatedUserId: oldUserData.id,
-          comment: comments ? comments : ""
+          comment: comments ? comments : "",
+          userName: req?.user?.username,
+          userLevel: req?.user?.userLevel
         });
       }
       
@@ -363,7 +377,9 @@ exports.updateUser = async (req, res, next) => {
         newValue: userLevel,
         category: 'general',
         updatedUserId: oldUserData.id,
-        comment: comments ? comments : ""
+        comment: comments ? comments : "",
+        userName: req?.user?.username,
+        userLevel: req?.user?.userLevel
       });
     }
     
@@ -376,7 +392,9 @@ exports.updateUser = async (req, res, next) => {
         newValue: attempts,
         category: 'general',
         updatedUserId: oldUserData.id,
-        comment: comments ? comments : ""
+        comment: comments ? comments : "",
+        userName: req?.user?.username,
+        userLevel: req?.user?.userLevel
       });
     }
     
@@ -389,7 +407,9 @@ exports.updateUser = async (req, res, next) => {
         newValue: autoLogoutTime,
         category: 'general',
         updatedUserId: oldUserData.id,
-        comment: comments ? comments : ""
+        comment: comments ? comments : "",
+        userName: req?.user?.username,
+        userLevel: req?.user?.userLevel
       });
     }
     
@@ -402,7 +422,9 @@ exports.updateUser = async (req, res, next) => {
         newValue: passwordExpiry,
         category: 'general',
         updatedUserId: oldUserData.id,
-        comment: comments ? comments : ""
+        comment: comments ? comments : "",
+        userName: req?.user?.username,
+        userLevel: req?.user?.userLevel
       });
     }
     
@@ -415,7 +437,9 @@ exports.updateUser = async (req, res, next) => {
         newValue: expiryDaysNotification,
         category: 'general',
         updatedUserId: oldUserData.id,
-        comment: comments ? comments : ""
+        comment: comments ? comments : "",
+        userName: req?.user?.username,
+        userLevel: req?.user?.userLevel
       });
     }
     
@@ -428,7 +452,9 @@ exports.updateUser = async (req, res, next) => {
         newValue: autoUnblockTime,
         category: 'general',
         updatedUserId: oldUserData.id,
-        comment: comments ? comments : ""
+        comment: comments ? comments : "",
+        userName: req?.user?.username,
+        userLevel: req?.user?.userLevel
       });
     }
   
@@ -441,7 +467,9 @@ exports.updateUser = async (req, res, next) => {
         newValue: null,
         category: 'general',
         updatedUserId: oldUserData.id,
-        comment: comments ? comments : ""
+        comment: comments ? comments : "",
+        userName: req?.user?.username,
+        userLevel: req?.user?.userLevel
       });
     }
   
@@ -479,7 +507,9 @@ exports.changePassword = async (req, res, next) => {
         oldValue: null,
         newValue: null,
         category: 'general',
-        updatedUserId: user.id
+        updatedUserId: user.id,
+        userName: req?.user?.username,
+        userLevel: req?.user?.userLevel
       });
     }
 
@@ -529,3 +559,20 @@ exports.getAllUsernames = async (req, res, next) => {
   }
 };
 
+exports.logoutUserLogging = async (req, res, next) => {
+  console.log({userdata: req.user});
+  if (req.user.userLevel !== 'SuperAdmin') {
+    await AuditLog.create({
+      userId: req.user.id,
+      // macId: req.macAddress,
+      log: `User Logged out `,
+      oldValue: null,
+      newValue: null,
+      category: 'general',
+      updatedUserId: newUser.id || null,
+      comment: comments ? comments : "",
+      userName: req?.user?.username,
+      userLevel: req?.user?.userLevel
+    });
+  }
+}

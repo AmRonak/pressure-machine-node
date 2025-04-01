@@ -3,6 +3,11 @@ const sequelize = require('../sequelize');
 const User = require('./user');
 
 const AuditLog = sequelize.define('AuditLog', {
+  id: { // Explicitly define the id
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
   userId: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -11,10 +16,6 @@ const AuditLog = sequelize.define('AuditLog', {
       key: 'id'
     }
   },
-  // macId: {
-  //   type: DataTypes.STRING,
-  //   allowNull: false
-  // },
   updatedUserId: {
     type: DataTypes.INTEGER,
     allowNull: true,
@@ -34,6 +35,14 @@ const AuditLog = sequelize.define('AuditLog', {
   newValue: {
     type: DataTypes.STRING,
     allowNull: true
+  },
+  userLevel: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  userName: {
+    type: DataTypes.STRING,
+    allowNull: false
   },
   category: {
     type: DataTypes.STRING,

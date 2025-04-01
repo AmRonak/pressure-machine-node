@@ -18,7 +18,9 @@ exports.createLog = async (req, res, next) => {
       oldValue,
       newValue,
       category,
-      comment
+      comment,
+      userName: req?.user?.username,
+      userLevel: req?.user?.userLevel
     });
 
     res.status(201).json(auditLog);

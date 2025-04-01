@@ -2,6 +2,11 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../sequelize');
 
 const Logging = sequelize.define('Logging', {
+  id: { // Explicitly define the id
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
   userid: {
     type: DataTypes.STRING,
     allowNull: false,

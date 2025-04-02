@@ -115,7 +115,6 @@ wss.on('connection', (ws, req) => {
                 });
             }
         } else if (data.type === 'data-changed') {
-            console.log({ clients });
             Object.keys(clients).forEach(deviceId => {
                 if (clients[deviceId] && clients[deviceId].ws) { // && clients[deviceId].loggedIn) {
                     clients[deviceId].ws.send(JSON.stringify({ type: 'data-changed' }));

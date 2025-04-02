@@ -6,6 +6,7 @@ const { Op } = require('sequelize');
 // const getmac = require('getmac');
 const Permission = require('../models/permission');
 const { daysUntilExpiration, isPasswordExpired } = require('../utils/helper');
+const ParameterSetting = require('../models/parameterSetting');
 
 exports.createAdmin = async () => {
   try {
@@ -138,6 +139,12 @@ exports.loginUser = async (req, res) => {
     return res.status(400).json({ message: `Incorrect password. Login attempts left: ${user.attempts - user.failedAttempts}` });
   }
 
+  const [ parameterSetting ] = await ParameterSetting.findAll();
+
+  if(!parameterSetting) {
+    return res.status(400).json({ message: 'System Serial (Equipment Serial) number not found.' });
+  }
+
   // Reset failed attempts on successful login
   user.failedAttempts = 0;
   await user.save();
@@ -145,12 +152,13 @@ exports.loginUser = async (req, res) => {
     await AuditLog.create({
       userId: user.id,
       // macId: macAddress,
-      log: `User Logged In`,
+      log: `${user.username} Logged In to System ${parameterSetting.equipmentSerialNo}`,
       oldValue: null,
       newValue: null,
-      category: 'general',
+      category: 'alarm',
       userName: user.username,
-      userLevel: user.userLevel
+      userLevel: user.userLevel,
+      comment: 'User Logged into System'
     });
   }
   const token = jwt.sign({ id: user.id, userLevel: user.userLevel, username: user.username }, process.env.JWT_SECRET, { expiresIn: `90d` });
@@ -189,12 +197,22 @@ exports.currentProfile = async (req, res) => {
 
     const permissions = await Permission.findAll();
     
+    const [ parameterSetting ] = await ParameterSetting.findAll();
+    
     // Filter modules based on user role
     const accessibleModules = permissions.filter(permission => permission[user.userLevel.toLowerCase()]);
 
     res.status(200).json({
       message: 'This is a secured profile route',
-      user: {...req.user, pin: currentUser.pin, permissions: accessibleModules.map(module => module.id), tokenExpirationInfo, passwordExpired, autoLogoutTime: currentUser.autoLogoutTime},
+      user: {
+        ...req.user,
+        pin: currentUser.pin,
+        permissions: accessibleModules.map(module => module.id),
+        tokenExpirationInfo,
+        passwordExpired,
+        autoLogoutTime: currentUser.autoLogoutTime,
+        systemSerialNumber: parameterSetting.equipmentSerialNo
+      },
     });
   } catch (err) {
     res.status(500).json({ error: err.message });

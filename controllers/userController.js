@@ -155,7 +155,7 @@ exports.loginUser = async (req, res) => {
       log: `${user.username} Logged In to System ${parameterSetting.equipmentSerialNo}`,
       oldValue: null,
       newValue: null,
-      category: 'alarm',
+      category: 'Alarm',
       userName: user.username,
       userLevel: user.userLevel,
       comment: 'User Logged into System'

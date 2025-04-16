@@ -3,9 +3,9 @@ const sequelize = require('../sequelize');
 
 const User = sequelize.define('User', {
     id: { // Explicitly define the id
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
     },
     username: {
         type: DataTypes.STRING,
@@ -67,7 +67,11 @@ const User = sequelize.define('User', {
     comments: {
         type: DataTypes.TEXT,
         allowNull: true
-    }
+    },
+    // isLoggedIn: {
+    //     type: DataTypes.BOOLEAN,
+    //     defaultValue: false
+    // },
 });
 
 module.exports = User;

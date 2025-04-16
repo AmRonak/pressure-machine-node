@@ -17,6 +17,9 @@ router.post(
 // User login endpoint
 router.post('/login', loginValidationRules(), validate, userController.loginUser);
 
+// User logout endpoint
+// router.post('/logout', authenticateJWT, userController.logoutUser);
+
 router.get('/profile', authenticateJWT, userController.currentProfile);
 
 // Block/Unblock users
@@ -32,7 +35,7 @@ router.get('/usernames', authenticateJWT, userController.getAllUsernames);
 router.get('/:id', authenticateJWT, userController.getUserById);
 
 // Update user details
-router.put('/:id', authenticateJWT,  userValidationRules(), validate, userController.updateUser);
+router.put('/:id', authenticateJWT, userValidationRules(), validate, userController.updateUser);
 
 router.patch('/changePassword', authenticateJWT, changePasswordValidationRules(), validate, userController.changePassword);
 

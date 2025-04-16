@@ -5,7 +5,7 @@ exports.getMasterParameter = async (req, res, next) => {
   // const macId = req.macAddress;
 
   try {
-    let [ masterParameter ] = await MasterParameter.findAll();    
+    let [masterParameter] = await MasterParameter.findAll();
 
     if (!masterParameter) {
       masterParameter = await MasterParameter.create();
@@ -21,10 +21,10 @@ exports.updateMasterParameter = async (req, res, next) => {
   // const macId = req.macAddress;
   const { gasketPressure, gasketPressureAlarmTime, glovePressureAlarmTime, pressurePursuingPressure, pressurePursuingTime, glovePressure, valveOnTime, valveOffTime,
     motor1, motor2, motor3, valve1, valve2
-   } = req.body;
+  } = req.body;
 
   try {
-    const [ masterParameter ] = await MasterParameter.findAll();
+    const [masterParameter] = await MasterParameter.findAll();
 
     if (!masterParameter) return next(new AppError('Master parameter not found', 404));
 

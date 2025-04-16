@@ -14,7 +14,7 @@ const http = require('http');
 const OFFLINE = "OFFLINE";
 const LOGGED_IN = "LOGGED_IN";
 const ONLINE = "ONLINE";
-const TEST_STARTED = "TEST_STARTED";
+const TEST_STARTED = "TEST_STARTED";
 
 dotenv.config();
 
@@ -191,12 +191,12 @@ function getAllDeviceInfo() {
 }
 
 app.post('/send-data', (req, res) => {
-// console.log("reactClients ", reactClients);
+    // console.log("reactClients ", reactClients);
     const { deviceId, data, isSuperUser } = req.body;
 
     // Send data to a specific device
     if (clients[deviceId] && clients[deviceId].ws) {
-        clients[deviceId].ws.send(JSON.stringify({ type: 'data', payload: data, isSuperUser  }));
+        clients[deviceId].ws.send(JSON.stringify({ type: 'data', payload: data, isSuperUser }));
         res.json({ status: 'Data sent' });
     } else {
         res.status(404).json({ error: 'Device not found' });
@@ -215,7 +215,7 @@ app.all('*', (req, res, next) => {
 app.use(globalErrorHandler);
 
 sequelize.sync({
-    alter: true // this is for updating the database table
+    // alter: true // this is for updating the database table
 }).then(() => {
     server.listen(PORT, () => {
         console.log(`Server is running on port ${PORT}`);

@@ -47,7 +47,7 @@ const AuditLog = sequelize.define('AuditLog', {
   category: {
     type: DataTypes.STRING,
     allowNull: true,
-    defaultValue: 'general'
+    defaultValue: 'General'
   },
   comment: {
     type: DataTypes.STRING,

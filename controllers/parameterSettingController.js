@@ -7,7 +7,7 @@ exports.getCompanyName = async (req, res, next) => {
   // const macId = getmac.default();
 
   try {
-    let [ parameterSetting ] = await ParameterSetting.findAll();
+    let [parameterSetting] = await ParameterSetting.findAll();
 
     if (!parameterSetting || !parameterSetting.companyName) {
       return res.status(200).json({
@@ -27,10 +27,11 @@ exports.getParameterSettings = async (req, res, next) => {
   // const macId = req.macAddress;
 
   try {
-    let [ parameterSetting ] = await ParameterSetting.findAll();
+    let [parameterSetting] = await ParameterSetting.findAll();
 
     if (!parameterSetting) {
-      res.status(200).json({ message: "No Parameter Setting Found." })
+      // res.status(200).json({ message: "No Parameter Setting Found." })  
+      parameterSetting = await ParameterSetting.create();
     }
 
     res.status(200).json({
@@ -59,7 +60,7 @@ exports.updateParameterSettings = async (req, res, next) => {
   // const macId = req.macAddress;
   const { companyName, departmentName, equipmentName, equipmentSerialNo, defaultComment, areaName, batchName, batchNo, leakTestStatus, printComment } = req.body;
   try {
-    const [ parameterSetting ] = await ParameterSetting.findAll();
+    const [parameterSetting] = await ParameterSetting.findAll();
 
     if (!parameterSetting) {
       // Ensure only Administrators and Managers can update default settings
@@ -77,7 +78,7 @@ exports.updateParameterSettings = async (req, res, next) => {
           if (req.user.userLevel !== 'Administrator' && req.user.userLevel !== 'Manager') {
             return next(new AppError('You do not have permission to update default settings', 403));
           }
-  
+
           // Update default parameters
           if (companyName !== undefined) {
             await AuditLog.create({
@@ -86,7 +87,7 @@ exports.updateParameterSettings = async (req, res, next) => {
               log: `Company Name Changed`,
               oldValue: "-",
               newValue: companyName,
-              category: 'general',
+              category: 'General',
               comment: defaultComment ? defaultComment : "",
               userName: req?.user?.username,
               userLevel: req?.user?.userLevel
@@ -99,7 +100,7 @@ exports.updateParameterSettings = async (req, res, next) => {
               log: `Department Name Changed`,
               oldValue: "-",
               newValue: departmentName,
-              category: 'general',
+              category: 'General',
               comment: defaultComment ? defaultComment : "",
               userName: req?.user?.username,
               userLevel: req?.user?.userLevel
@@ -112,7 +113,7 @@ exports.updateParameterSettings = async (req, res, next) => {
               log: `Eqipment Name Changed`,
               oldValue: "-",
               newValue: equipmentName,
-              category: 'general',
+              category: 'General',
               comment: defaultComment ? defaultComment : "",
               userName: req?.user?.username,
               userLevel: req?.user?.userLevel
@@ -125,14 +126,14 @@ exports.updateParameterSettings = async (req, res, next) => {
               log: `Equipment Serial No. Changed`,
               oldValue: "-",
               newValue: equipmentSerialNo,
-              category: 'general',
+              category: 'General',
               comment: defaultComment ? defaultComment : "",
               userName: req?.user?.username,
               userLevel: req?.user?.userLevel
             });
           }
         }
-  
+
         // Update print parameters (any user can update)
         if (areaName !== undefined) {
           await AuditLog.create({
@@ -141,7 +142,7 @@ exports.updateParameterSettings = async (req, res, next) => {
             log: `Area Name Changed`,
             oldValue: "-",
             newValue: areaName,
-            category: 'general',
+            category: 'General',
             comment: printComment ? printComment : "",
             userName: req?.user?.username,
             userLevel: req?.user?.userLevel
@@ -154,7 +155,7 @@ exports.updateParameterSettings = async (req, res, next) => {
             log: `Batch Name Changed`,
             oldValue: "-",
             newValue: batchName,
-            category: 'general',
+            category: 'General',
             comment: printComment ? printComment : "",
             userName: req?.user?.username,
             userLevel: req?.user?.userLevel
@@ -167,7 +168,7 @@ exports.updateParameterSettings = async (req, res, next) => {
             log: `Batch No. Changed`,
             oldValue: "-",
             newValue: batchNo,
-            category: 'general',
+            category: 'General',
             comment: printComment ? printComment : "",
             userName: req?.user?.username,
             userLevel: req?.user?.userLevel
@@ -180,7 +181,7 @@ exports.updateParameterSettings = async (req, res, next) => {
             log: `Leak Test Changed`,
             oldValue: "-",
             newValue: leakTestStatus,
-            category: 'general',
+            category: 'General',
             comment: printComment ? printComment : "",
             userName: req?.user?.username,
             userLevel: req?.user?.userLevel
@@ -254,9 +255,9 @@ exports.updateParameterSettings = async (req, res, next) => {
       await parameterSetting.save();
 
       if (req.user.userLevel !== 'SuperAdmin') {
-        
+
         if (companyName !== undefined || departmentName !== undefined || equipmentName !== undefined || equipmentSerialNo !== undefined || defaultComment !== undefined) {
-          if (req.user.userLevel === 'Administrator' || req.user.userLevel === 'Manager' ) {
+          if (req.user.userLevel === 'Administrator' || req.user.userLevel === 'Manager') {
             if (companyName !== undefined && companyName !== oldParameterSetting.companyName) {
               await AuditLog.create({
                 userId: req.user.id,
@@ -264,7 +265,7 @@ exports.updateParameterSettings = async (req, res, next) => {
                 log: `Company Name Changed`,
                 oldValue: oldParameterSetting.companyName,
                 newValue: companyName,
-                category: 'general',
+                category: 'General',
                 comment: defaultComment ? defaultComment : "",
                 userName: req?.user?.username,
                 userLevel: req?.user?.userLevel
@@ -277,7 +278,7 @@ exports.updateParameterSettings = async (req, res, next) => {
                 log: `Department Name Changed`,
                 oldValue: oldParameterSetting.departmentName,
                 newValue: departmentName,
-                category: 'general',
+                category: 'General',
                 comment: defaultComment ? defaultComment : "",
                 userName: req?.user?.username,
                 userLevel: req?.user?.userLevel
@@ -290,7 +291,7 @@ exports.updateParameterSettings = async (req, res, next) => {
                 log: `Eqipment Name Changed`,
                 oldValue: oldParameterSetting.equipmentName,
                 newValue: equipmentName,
-                category: 'general',
+                category: 'General',
                 comment: defaultComment ? defaultComment : "",
                 userName: req?.user?.username,
                 userLevel: req?.user?.userLevel
@@ -303,7 +304,7 @@ exports.updateParameterSettings = async (req, res, next) => {
                 log: `Equipment Serial No. Changed`,
                 oldValue: oldParameterSetting.equipmentSerialNo,
                 newValue: equipmentSerialNo,
-                category: 'general',
+                category: 'General',
                 comment: defaultComment ? defaultComment : "",
                 userName: req?.user?.username,
                 userLevel: req?.user?.userLevel
@@ -318,7 +319,7 @@ exports.updateParameterSettings = async (req, res, next) => {
             log: `Area Name Changed`,
             oldValue: oldParameterSetting.areaName,
             newValue: areaName,
-            category: 'general',
+            category: 'General',
             comment: printComment ? printComment : "",
             userName: req?.user?.username,
             userLevel: req?.user?.userLevel
@@ -331,7 +332,7 @@ exports.updateParameterSettings = async (req, res, next) => {
             log: `Batch Name Changed`,
             oldValue: oldParameterSetting.batchName,
             newValue: batchName,
-            category: 'general',
+            category: 'General',
             comment: printComment ? printComment : "",
             userName: req?.user?.username,
             userLevel: req?.user?.userLevel
@@ -344,7 +345,7 @@ exports.updateParameterSettings = async (req, res, next) => {
             log: `Batch No. Changed`,
             oldValue: oldParameterSetting.batchNo,
             newValue: batchNo,
-            category: 'general',
+            category: 'General',
             comment: printComment ? printComment : "",
             userName: req?.user?.username,
             userLevel: req?.user?.userLevel
@@ -357,7 +358,7 @@ exports.updateParameterSettings = async (req, res, next) => {
             log: `Leak Test Changed`,
             oldValue: oldParameterSetting.leakTestStatus,
             newValue: leakTestStatus,
-            category: 'general',
+            category: 'General',
             comment: printComment ? printComment : "",
             userName: req?.user?.username,
             userLevel: req?.user?.userLevel

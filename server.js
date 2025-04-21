@@ -120,6 +120,12 @@ wss.on('connection', (ws, req) => {
                     clients[deviceId].ws.send(JSON.stringify({ type: 'data-changed' }));
                 }
             })
+        } else if (data.type === 'is-in-device-page') {
+            Object.keys(clients).forEach(deviceId => {
+                if (clients[deviceId] && clients[deviceId].ws) { // && clients[deviceId].loggedIn) {
+                    clients[deviceId].ws.send(JSON.stringify(data));
+                }
+            })
         }
     });
 

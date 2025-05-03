@@ -51,7 +51,7 @@ exports.updateRecipeSetting = async (req, res, next) => {
           log: `Initial Pressure Changed`,
           oldValue: oldRecipeSetting.initialPressure,
           newValue: initialPressure,
-          category: 'general',
+          category: 'General',
           comment: comment ? comment : "",
           userName: req?.user?.username,
           userLevel: req?.user?.userLevel
@@ -64,7 +64,7 @@ exports.updateRecipeSetting = async (req, res, next) => {
           log: `Set Pressure Changed`,
           oldValue: oldRecipeSetting.setPressure,
           newValue: setPressure,
-          category: 'general',
+          category: 'General',
           comment: comment ? comment : "",
           userName: req?.user?.username,
           userLevel: req?.user?.userLevel
@@ -77,7 +77,7 @@ exports.updateRecipeSetting = async (req, res, next) => {
           log: `Leak Test Pressure Changed`,
           oldValue: oldRecipeSetting.leakTestPressure,
           newValue: leakTestPressure,
-          category: 'general',
+          category: 'General',
           comment: comment ? comment : "",
           userName: req?.user?.username,
           userLevel: req?.user?.userLevel
@@ -90,7 +90,7 @@ exports.updateRecipeSetting = async (req, res, next) => {
           log: `Lower Test Pressure Changed`,
           oldValue: oldRecipeSetting.lowerTestPressure,
           newValue: lowerTestPressure,
-          category: 'general',
+          category: 'General',
           comment: comment ? comment : "",
           userName: req?.user?.username,
           userLevel: req?.user?.userLevel
@@ -103,7 +103,7 @@ exports.updateRecipeSetting = async (req, res, next) => {
           log: `Stabilization Time Changed`,
           oldValue: oldRecipeSetting.stabilizationTime,
           newValue: stabilizationTime,
-          category: 'general',
+          category: 'General',
           comment: comment ? comment : "",
           userName: req?.user?.username,
           userLevel: req?.user?.userLevel
@@ -116,7 +116,7 @@ exports.updateRecipeSetting = async (req, res, next) => {
           log: `Test Time Changed`,
           oldValue: oldRecipeSetting.testTime,
           newValue: testTime,
-          category: 'general',
+          category: 'General',
           comment: comment ? comment : "",
           userName: req?.user?.username,
           userLevel: req?.user?.userLevel

@@ -10,6 +10,8 @@ const User = require('./models/user');
 const { createAdmin } = require('./controllers/userController');
 const WebSocket = require('ws');
 const http = require('http');
+const { time } = require('console');
+const { getCurrentDateTimeUTC } = require('./utils/currentDateTime');
 
 const OFFLINE = "OFFLINE";
 const LOGGED_IN = "LOGGED_IN";
@@ -53,6 +55,7 @@ wss.on('connection', (ws, req) => {
                     testStarted: false,
                     testStopped: false
                 };
+                console.log('Device Id type:', typeof data.deviceId);
                 console.log(`Device registered: ${data.deviceId}`);
 
                 notifyReactClients({
@@ -117,13 +120,13 @@ wss.on('connection', (ws, req) => {
         } else if (data.type === 'data-changed') {
             Object.keys(clients).forEach(deviceId => {
                 if (clients[deviceId] && clients[deviceId].ws) { // && clients[deviceId].loggedIn) {
-                    clients[deviceId].ws.send(JSON.stringify({ type: 'data-changed' }));
+                    clients[deviceId].ws.send(JSON.stringify({ type: 'data-changed', timestamp: getCurrentDateTimeUTC() }));
                 }
             })
         } else if (data.type === 'is-in-device-page') {
             Object.keys(clients).forEach(deviceId => {
                 if (clients[deviceId] && clients[deviceId].ws) { // && clients[deviceId].loggedIn) {
-                    clients[deviceId].ws.send(JSON.stringify(data));
+                    clients[deviceId].ws.send(JSON.stringify({ ...data, timestamp: getCurrentDateTimeUTC() }));
                 }
             })
         }
@@ -202,7 +205,7 @@ app.post('/send-data', (req, res) => {
 
     // Send data to a specific device
     if (clients[deviceId] && clients[deviceId].ws) {
-        clients[deviceId].ws.send(JSON.stringify({ type: 'data', payload: data, isSuperUser }));
+        clients[deviceId].ws.send(JSON.stringify({ type: 'data', payload: data, isSuperUser, timestamp: getCurrentDateTimeUTC() }));
         res.json({ status: 'Data sent' });
     } else {
         res.status(404).json({ error: 'Device not found' });
